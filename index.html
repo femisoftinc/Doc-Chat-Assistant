@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PropDoc AI — Real Estate SOP Assistant</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@400;500&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap');
+  :root {
+    --bg:#0b0f1a; --surface:#111827; --surface2:#1a2236; --border:#1e2d45;
+    --accent:#00c2ff; --accent2:#3b82f6; --gold:#f59e0b;
+    --green:#10b981; --red:#ef4444; --orange:#f97316;
+    --text:#e2e8f0; --muted:#64748b; --user-bubble:#1e3a5f; --bot-bubble:#151f30;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);height:100vh;display:flex;flex-direction:column;overflow:hidden}
+
+  /* HEADER */
+  header{background:var(--surface);border-bottom:1px solid var(--border);padding:0 24px;height:60px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+  .logo{display:flex;align-items:center;gap:10px}
+  .logo-icon{width:32px;height:32px;background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px}
+  .logo-text{font-family:'Syne',sans-serif;font-weight:800;font-size:18px;letter-spacing:-0.5px}
+  .logo-text span{color:var(--accent)}
+  .header-tags{display:flex;gap:8px}
+  .tag{font-family:'JetBrains Mono',monospace;font-size:10px;padding:3px 8px;border-radius:4px;border:1px solid var(--border);color:var(--muted)}
+  .tag.active{border-color:var(--accent);color:var(--accent)}
+  .status-dot{width:8px;height:8px;border-radius:50%;background:var(--green);display:inline-block;margin-right:6px;box-shadow:0 0 6px var(--green);animation:pulse 2s infinite}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
+
+  /* LAYOUT */
+  .main{display:flex;flex:1;overflow:hidden}
+
+  /* SIDEBAR */
+  .sidebar{width:260px;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;overflow-y:auto}
+  .sidebar-section{padding:16px;border-bottom:1px solid var(--border)}
+  .sidebar-title{font-family:'JetBrains Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted);margin-bottom:12px}
+  .quick-btn{width:100%;text-align:left;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:9px 12px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:12.5px;cursor:pointer;margin-bottom:6px;transition:all 0.15s;line-height:1.4}
+  .quick-btn:hover{border-color:var(--accent);background:rgba(0,194,255,0.06);color:var(--accent)}
+  .quick-btn .icon{display:inline-block;margin-right:6px;font-size:13px}
+  .kb-stats{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+  .stat-chip{background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:8px;text-align:center}
+  .stat-num{font-family:'Syne',sans-serif;font-weight:700;font-size:18px;color:var(--accent)}
+  .stat-label{font-size:10px;color:var(--muted);margin-top:2px}
+
+  /* UPLOAD ZONE */
+  .upload-zone{border:1.5px dashed var(--border);border-radius:10px;padding:16px 12px;text-align:center;cursor:pointer;transition:all 0.2s;position:relative}
+  .upload-zone:hover,.upload-zone.drag-over{border-color:var(--accent);background:rgba(0,194,255,0.05)}
+  .upload-zone input[type="file"]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+  .upload-icon{font-size:24px;margin-bottom:6px}
+  .upload-text{font-size:12px;color:var(--muted);line-height:1.5}
+  .upload-text strong{color:var(--text);display:block;font-size:13px;margin-bottom:2px}
+  .upload-formats{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--accent);margin-top:6px}
+
+  /* FILE PREVIEW */
+  .attached-file{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:10px 12px;margin-top:8px;display:flex;align-items:center;gap:10px;font-size:12.5px}
+  .attached-file .file-icon{font-size:20px;flex-shrink:0}
+  .attached-file .file-info{flex:1;min-width:0}
+  .attached-file .file-name{font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .attached-file .file-size{font-size:11px;color:var(--muted);margin-top:2px}
+  .attached-file .file-remove{background:none;border:none;color:var(--muted);cursor:pointer;font-size:16px;padding:2px;transition:color 0.15s;flex-shrink:0}
+  .attached-file .file-remove:hover{color:var(--red)}
+  .analyze-btn{width:100%;margin-top:8px;background:linear-gradient(135deg,rgba(0,194,255,0.15),rgba(59,130,246,0.15));border:1px solid var(--accent);border-radius:8px;padding:10px;color:var(--accent);font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;justify-content:center;gap:6px}
+  .analyze-btn:hover{background:rgba(0,194,255,0.2)}
+  .analyze-btn:disabled{opacity:0.4;cursor:not-allowed}
+
+  /* CHAT */
+  .chat-area{flex:1;display:flex;flex-direction:column;overflow:hidden}
+  .messages{flex:1;overflow-y:auto;padding:24px;display:flex;flex-direction:column;gap:16px;scroll-behavior:smooth}
+  .messages::-webkit-scrollbar{width:4px}
+  .messages::-webkit-scrollbar-track{background:transparent}
+  .messages::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+
+  .msg{display:flex;gap:12px;max-width:840px;animation:fadeUp 0.3s ease}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+  .msg.user{align-self:flex-end;flex-direction:row-reverse}
+  .avatar{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;margin-top:2px}
+  .avatar.bot{background:linear-gradient(135deg,var(--accent2),var(--accent))}
+  .avatar.user{background:var(--surface2);border:1px solid var(--border)}
+  .bubble{padding:12px 16px;border-radius:12px;font-size:14px;line-height:1.65;max-width:700px}
+  .bubble.bot{background:var(--bot-bubble);border:1px solid var(--border);border-top-left-radius:4px}
+  .bubble.user{background:var(--user-bubble);border:1px solid rgba(59,130,246,0.3);border-top-right-radius:4px}
+
+  /* DOC PREVIEW IN BUBBLE */
+  .doc-preview{background:rgba(0,194,255,0.08);border:1px solid rgba(0,194,255,0.2);border-radius:8px;padding:8px 12px;margin-bottom:8px;display:flex;align-items:center;gap:10px}
+  .doc-preview .dp-icon{font-size:20px}
+  .doc-preview .dp-name{font-weight:500;color:var(--accent);font-size:13px}
+  .doc-preview .dp-meta{font-size:11px;color:var(--muted);margin-top:2px}
+
+  /* BUBBLE CONTENT */
+  .bubble h4{font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:var(--accent);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px}
+  .bubble p{margin-bottom:8px}
+  .bubble p:last-child{margin-bottom:0}
+  .bubble .code-tag{font-family:'JetBrains Mono',monospace;background:rgba(0,194,255,0.1);color:var(--accent);border:1px solid rgba(0,194,255,0.2);padding:1px 6px;border-radius:4px;font-size:12px}
+  .bubble .invalid-badge{display:inline-block;background:rgba(239,68,68,0.15);color:var(--red);border:1px solid rgba(239,68,68,0.3);border-radius:4px;padding:2px 8px;font-size:11px;font-family:'JetBrains Mono',monospace;margin:0 2px}
+  .bubble .valid-badge{display:inline-block;background:rgba(16,185,129,0.15);color:var(--green);border:1px solid rgba(16,185,129,0.3);border-radius:4px;padding:2px 8px;font-size:11px;font-family:'JetBrains Mono',monospace;margin:0 2px}
+  .bubble ul{list-style:none;padding:0;margin:6px 0}
+  .bubble ul li{padding:3px 0 3px 16px;position:relative;font-size:13.5px}
+  .bubble ul li::before{content:'›';position:absolute;left:0;color:var(--accent);font-weight:bold}
+
+  /* VERDICT CARD */
+  .verdict-card{border-radius:10px;padding:14px 16px;margin:10px 0;border:1.5px solid}
+  .verdict-card.vc-valid{background:rgba(16,185,129,0.08);border-color:rgba(16,185,129,0.4)}
+  .verdict-card.vc-invalid{background:rgba(239,68,68,0.08);border-color:rgba(239,68,68,0.4)}
+  .verdict-card.vc-review{background:rgba(249,115,22,0.08);border-color:rgba(249,115,22,0.4)}
+  .verdict-header{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+  .verdict-icon{font-size:22px}
+  .verdict-label{font-family:'Syne',sans-serif;font-size:15px;font-weight:700}
+  .vc-valid .verdict-label{color:var(--green)}
+  .vc-invalid .verdict-label{color:var(--red)}
+  .vc-review .verdict-label{color:var(--orange)}
+
+  /* FIELD TABLE */
+  .field-table{background:var(--surface2);border:1px solid var(--border);border-radius:8px;margin:8px 0;overflow:hidden}
+  .ft-head{background:rgba(0,194,255,0.08);padding:7px 12px;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--accent);text-transform:uppercase;letter-spacing:1px;border-bottom:1px solid var(--border)}
+  .ft-row{display:flex;padding:7px 12px;border-bottom:1px solid rgba(30,45,69,0.5);font-size:13px;align-items:flex-start;gap:8px}
+  .ft-row:last-child{border-bottom:none}
+  .ft-key{color:var(--muted);width:165px;flex-shrink:0;font-size:12px;padding-top:1px}
+  .ft-val{font-weight:500;word-break:break-word}
+  .ft-val.found{color:var(--green)}
+  .ft-val.missing{color:var(--red);font-style:italic;font-weight:400}
+  .ft-val.warn{color:var(--orange)}
+
+  /* TYPING */
+  .typing{display:flex;align-items:center;gap:4px;padding:8px 0}
+  .typing span{width:6px;height:6px;border-radius:50%;background:var(--accent);animation:bounce 1.2s infinite}
+  .typing span:nth-child(2){animation-delay:0.2s}
+  .typing span:nth-child(3){animation-delay:0.4s}
+  @keyframes bounce{0%,60%,100%{transform:translateY(0);opacity:0.4}30%{transform:translateY(-6px);opacity:1}}
+
+  /* INPUT BAR */
+  .input-bar{padding:12px 24px 14px;background:var(--surface);border-top:1px solid var(--border)}
+  .inline-attach-bar{display:none;align-items:center;gap:8px;background:rgba(0,194,255,0.06);border:1px solid rgba(0,194,255,0.25);border-radius:8px 8px 0 0;padding:7px 12px;font-size:12.5px;border-bottom:none}
+  .inline-attach-bar.show{display:flex}
+  .iab-icon{font-size:16px}
+  .iab-name{flex:1;color:var(--accent);font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .iab-size{color:var(--muted);font-size:11px;flex-shrink:0}
+  .iab-remove{background:none;border:none;color:var(--muted);cursor:pointer;font-size:14px;padding:2px;line-height:1}
+  .iab-remove:hover{color:var(--red)}
+  .input-row{display:flex;gap:10px;align-items:flex-end}
+  .input-wrap{flex:1;background:var(--surface2);border:1px solid var(--border);border-radius:12px;display:flex;align-items:center;padding:0 8px 0 14px;gap:6px;transition:border-color 0.2s}
+  .input-wrap.attached{border-radius:0 0 12px 12px;border-top-color:transparent}
+  .input-wrap:focus-within{border-color:var(--accent)}
+  textarea{flex:1;background:transparent;border:none;outline:none;color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;resize:none;padding:13px 0;max-height:120px;line-height:1.5}
+  textarea::placeholder{color:var(--muted)}
+  .attach-inline-btn{position:relative;width:34px;height:34px;border-radius:8px;background:var(--surface);border:1px solid var(--border);color:var(--muted);cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;transition:all 0.15s;flex-shrink:0}
+  .attach-inline-btn:hover{border-color:var(--accent);color:var(--accent);background:rgba(0,194,255,0.06)}
+  .attach-inline-btn.has{border-color:var(--accent);color:var(--accent);background:rgba(0,194,255,0.1)}
+  .attach-inline-btn input{position:absolute;inset:0;opacity:0;cursor:pointer;font-size:0}
+  .send-btn{width:42px;height:42px;border-radius:10px;background:linear-gradient(135deg,var(--accent2),var(--accent));border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;transition:opacity 0.2s,transform 0.1s}
+  .send-btn:hover{opacity:0.85}
+  .send-btn:active{transform:scale(0.95)}
+  .send-btn:disabled{opacity:0.4;cursor:not-allowed}
+  .input-hint{font-size:11px;color:var(--muted);margin-top:6px;display:flex;gap:16px}
+
+  /* WELCOME */
+  .welcome{text-align:center;max-width:600px;margin:auto;padding:40px 20px}
+  .welcome .w-icon{font-size:48px;margin-bottom:16px}
+  .welcome h2{font-family:'Syne',sans-serif;font-size:26px;font-weight:800;margin-bottom:8px}
+  .welcome p{color:var(--muted);font-size:14px;line-height:1.7;margin-bottom:20px}
+  .welcome-chips{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+  .chip{background:var(--surface2);border:1px solid var(--border);border-radius:20px;padding:7px 14px;font-size:12.5px;cursor:pointer;transition:all 0.15s;color:var(--text)}
+  .chip:hover{border-color:var(--accent);color:var(--accent);background:rgba(0,194,255,0.05)}
+  .upload-callout{margin-top:20px;background:rgba(0,194,255,0.06);border:1px solid rgba(0,194,255,0.2);border-radius:10px;padding:14px 18px;font-size:13px;color:var(--text);display:flex;align-items:flex-start;gap:12px;text-align:left}
+  .upload-callout .uc-icon{font-size:24px;flex-shrink:0}
+  .upload-callout strong{color:var(--accent);display:block;margin-bottom:4px;font-size:14px}
+  .error-msg{color:var(--red);font-size:13px;padding:8px 12px;background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.2);border-radius:8px;margin-top:6px}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <div class="logo-icon">🏠</div>
+    <div class="logo-text">Prop<span>Doc</span> AI</div>
+  </div>
+  <div class="header-tags">
+    <span class="tag active"><span class="status-dot"></span>Live</span>
+    <span class="tag">US Real Estate SOP</span>
+    <span class="tag">PDF · Image · Text</span>
+  </div>
+</header>
+
+<div class="main">
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+
+    <div class="sidebar-section">
+      <div class="sidebar-title">Knowledge Base</div>
+      <div class="kb-stats">
+        <div class="stat-chip"><div class="stat-num">332</div><div class="stat-label">Fields</div></div>
+        <div class="stat-chip"><div class="stat-num">165</div><div class="stat-label">Doc Types</div></div>
+        <div class="stat-chip"><div class="stat-num">48</div><div class="stat-label">Counties</div></div>
+        <div class="stat-chip"><div class="stat-num">48</div><div class="stat-label">Invalid Rules</div></div>
+      </div>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-title">📎 Upload &amp; Check Document</div>
+      <div class="upload-zone" id="uploadZone"
+           ondragover="onDragOver(event)" ondragleave="onDragLeave(event)" ondrop="onDrop(event)">
+        <input type="file" id="fileInputSidebar" accept=".pdf,.png,.jpg,.jpeg,.webp,.gif"
+               onchange="onFileSelect(event)">
+        <div class="upload-icon">📂</div>
+        <div class="upload-text">
+          <strong>Drop file or click to browse</strong>
+          Upload a deed, mortgage, or any property document to check validity
+        </div>
+        <div class="upload-formats">PDF · PNG · JPG · WEBP</div>
+      </div>
+
+      <div id="sidebarPreview" style="display:none">
+        <div class="attached-file">
+          <div class="file-icon" id="sbIcon">📄</div>
+          <div class="file-info">
+            <div class="file-name" id="sbName">—</div>
+            <div class="file-size" id="sbSize">—</div>
+          </div>
+          <button class="file-remove" onclick="clearFile()">✕</button>
+        </div>
+        <button class="analyze-btn" id="analyzeBtn" onclick="quickAnalyze()">
+          🔍 Analyze Document
+        </button>
+      </div>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-title">Quick Questions</div>
+      <button class="quick-btn" onclick="sq('What is the FIPS code and how do I use it?')"><span class="icon">🔢</span>What is FIPS code?</button>
+      <button class="quick-btn" onclick="sq('What are the document types for Deed transfers and their codes?')"><span class="icon">📄</span>Deed document types</button>
+      <button class="quick-btn" onclick="sq('When is a document marked INVALID due to Easement?')"><span class="icon">🚫</span>Easement invalid rule</button>
+      <button class="quick-btn" onclick="sq('What are the keying instructions for Calcasieu LA?')"><span class="icon">📍</span>Calcasieu LA KI</button>
+      <button class="quick-btn" onclick="sq('What is the Recording Date format and where to find it?')"><span class="icon">📅</span>Recording Date field</button>
+      <button class="quick-btn" onclick="sq('What are the valid vesting codes I can use?')"><span class="icon">📋</span>Vesting codes</button>
+      <button class="quick-btn" onclick="sq('How do I identify seller and buyer names in a Louisiana document?')"><span class="icon">👤</span>Seller/Buyer (LA)</button>
+      <button class="quick-btn" onclick="sq('What are the loan types and their codes?')"><span class="icon">💰</span>Loan type codes</button>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-title">Counties Loaded</div>
+      <div style="font-size:11.5px;color:var(--muted);line-height:1.9">
+        LA · IN · IL · MI · MO · KY · KS · MN · AL · NY
+        <br><span style="color:var(--accent);font-size:10px;font-family:'JetBrains Mono',monospace">48 county KIs loaded</span>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- CHAT -->
+  <div class="chat-area">
+    <div class="messages" id="messages">
+      <div class="welcome" id="welcome">
+        <div class="w-icon">🏢</div>
+        <h2>PropDoc AI Assistant</h2>
+        <p>SOP-powered assistant for US real estate document collection. Ask any question, or upload a PDF/screenshot to instantly check if a document is valid and extract its key fields.</p>
+        <div class="welcome-chips">
+          <span class="chip" onclick="sq('What documents are invalid for Zillow?')">Invalid document headers</span>
+          <span class="chip" onclick="sq('Explain Data Class codes D, M, and F')">Data Class codes</span>
+          <span class="chip" onclick="sq('How do I key the APN for Assumption LA?')">APN — Assumption LA</span>
+          <span class="chip" onclick="sq('Difference between Recording Date and Document Date?')">Recording vs Doc Date</span>
+          <span class="chip" onclick="sq('What are the rules for keying Sales Price?')">Sales Price rules</span>
+        </div>
+        <div class="upload-callout">
+          <div class="uc-icon">📎</div>
+          <div>
+            <strong>Upload any document for instant validity check</strong>
+            Attach a PDF or screenshot of a deed, mortgage, or assignment — then ask "Is this valid?" to get a full SOP-based verdict with extracted fields and document type code.
+          </div>
+        </div>
+      </div>
+    </div>
+     
+    <!-- Inline attachment bar (above input) -->
+    <div class="inline-attach-bar" id="inlineBar">
+      <span class="iab-icon" id="iabIcon">📄</span>
+      <span class="iab-name" id="iabName">—</span>
+      <span class="iab-size" id="iabSize"></span>
+      <button class="iab-remove" onclick="clearFile()">✕</button>
+    </div>
+
+    <div class="input-bar">
+      <div class="input-row">
+        <div class="input-wrap" id="inputWrap">
+          <textarea id="userInput"
+            placeholder="Ask about fields, document types, county KIs, validity rules…"
+            rows="1" onkeydown="onKey(event)" oninput="resize(this)"></textarea>
+          <div class="attach-inline-btn" id="attachBtn" title="Attach PDF or image (PDF · PNG · JPG · WEBP)">
+            📎
+            <input type="file" id="fileInputInline" accept=".pdf,.png,.jpg,.jpeg,.webp,.gif"
+                   onchange="onFileSelect(event)">
+          </div>
+        </div>
+        <button class="send-btn" id="sendBtn" onclick="send()">➤</button>
+      </div>
+      <div class="input-hint">
+        <span>↵ Send</span>
+        <span>Shift+↵ New line</span>
+        <span>📎 Attach PDF or image to check validity</span>
+      </div>
+    </div>
+  </div>
+  
+</div>
+
+<script>
+/* ── State ── */
+let file = null, fileB64 = null, fileMime = null;
+let loading = false;
+let history = [];   // conversation history for multi-turn
+
+/* ── File helpers ── */
+function onDragOver(e){ e.preventDefault(); document.getElementById('uploadZone').classList.add('drag-over'); }
+function onDragLeave(){ document.getElementById('uploadZone').classList.remove('drag-over'); }
+function onDrop(e){ e.preventDefault(); document.getElementById('uploadZone').classList.remove('drag-over'); const f=e.dataTransfer.files[0]; if(f) loadFile(f); }
+function onFileSelect(e){ const f=e.target.files[0]; if(f) loadFile(f); e.target.value=''; }
+
+function loadFile(f){
+  const ok=['application/pdf','image/png','image/jpeg','image/webp','image/gif'];
+  if(!ok.includes(f.type)){ alert('Please upload a PDF, PNG, JPG, WEBP, or GIF.'); return; }
+  if(f.size>20*1024*1024){ alert('File too large. Max 20 MB.'); return; }
+  file=f; fileMime=f.type;
+  const r=new FileReader();
+  r.onload=ev=>{ fileB64=ev.target.result.split(',')[1]; refreshAttachUI(); };
+  r.readAsDataURL(f);
+}
+
+function refreshAttachUI(){
+  if(!file) return;
+  const icon = fileMime==='application/pdf'?'📄':'🖼️';
+  const sz = fmtSize(file.size);
+  // sidebar
+  document.getElementById('sbIcon').textContent=icon;
+  document.getElementById('sbName').textContent=file.name;
+  document.getElementById('sbSize').textContent=sz;
+  document.getElementById('sidebarPreview').style.display='block';
+  // inline bar
+  document.getElementById('iabIcon').textContent=icon;
+  document.getElementById('iabName').textContent=file.name;
+  document.getElementById('iabSize').textContent=sz;
+  document.getElementById('inlineBar').classList.add('show');
+  document.getElementById('inputWrap').classList.add('attached');
+  document.getElementById('attachBtn').classList.add('has');
+  document.getElementById('userInput').placeholder='Ask "Is this valid?" or "What type is this?" or "Extract the fields"…';
+}
+
+function clearFile(){
+  file=null; fileB64=null; fileMime=null;
+  document.getElementById('sidebarPreview').style.display='none';
+  document.getElementById('inlineBar').classList.remove('show');
+  document.getElementById('inputWrap').classList.remove('attached');
+  document.getElementById('attachBtn').classList.remove('has');
+  document.getElementById('userInput').placeholder='Ask about fields, document types, county KIs, validity rules…';
+}
+
+function fmtSize(b){ if(b<1024) return b+' B'; if(b<1048576) return (b/1024).toFixed(1)+' KB'; return (b/1048576).toFixed(1)+' MB'; }
+
+/* ── Analyze shortcut (sidebar button) ── */
+function quickAnalyze(){
+  document.getElementById('userInput').value='Please analyze this document: Is it VALID or INVALID per our SOP? Identify the document type and code, extract all key fields (Recording Date, Document Number, Book, Page, Seller, Buyer, APN, Sales Price, Loan Amount if any), and give your full validity verdict with specific reasons.';
+  send();
+}
+
+/* ── Input helpers ── */
+function resize(el){ el.style.height='auto'; el.style.height=Math.min(el.scrollHeight,120)+'px'; }
+function onKey(e){ if(e.key==='Enter'&&!e.shiftKey){ e.preventDefault(); send(); } }
+function sq(t){ document.getElementById('userInput').value=t; send(); }
+
+/* ── DOM helpers ── */
+const msgsEl = document.getElementById('messages');
+
+function killWelcome(){ const w=document.getElementById('welcome'); if(w) w.remove(); }
+
+function addMsg(role, html, docMeta){
+  killWelcome();
+  const wrap=document.createElement('div'); wrap.className=`msg ${role}`;
+  const av=document.createElement('div'); av.className=`avatar ${role}`; av.textContent=role==='bot'?'🤖':'👤';
+  const bub=document.createElement('div'); bub.className=`bubble ${role}`;
+  if(docMeta){
+    bub.innerHTML=`<div class="doc-preview"><span class="dp-icon">${docMeta.isPDF?'📄':'🖼️'}</span><div><div class="dp-name">${esc(docMeta.name)}</div><div class="dp-meta">${docMeta.isPDF?'PDF Document':'Image'} · ${docMeta.size}</div></div></div>`;
+  }
+  const body=document.createElement('div'); body.innerHTML=html;
+  bub.appendChild(body);
+  wrap.appendChild(av); wrap.appendChild(bub);
+  msgsEl.appendChild(wrap);
+  msgsEl.scrollTop=msgsEl.scrollHeight;
+}
+
+function showTyping(){
+  killWelcome();
+  const d=document.createElement('div'); d.className='msg bot'; d.id='typing';
+  const av=document.createElement('div'); av.className='avatar bot'; av.textContent='🤖';
+  const bub=document.createElement('div'); bub.className='bubble bot';
+  bub.innerHTML='<div class="typing"><span></span><span></span><span></span></div>';
+  d.appendChild(av); d.appendChild(bub); msgsEl.appendChild(d);
+  msgsEl.scrollTop=msgsEl.scrollHeight;
+}
+function hideTyping(){ const t=document.getElementById('typing'); if(t) t.remove(); }
+
+/* ── Main send ── */
+async function send(){
+  const txt=document.getElementById('userInput').value.trim();
+  if((!txt&&!file)||loading) return;
+  loading=true;
+  document.getElementById('sendBtn').disabled=true;
+  const ab=document.getElementById('analyzeBtn'); if(ab) ab.disabled=true;
+
+  const displayTxt = txt || '📎 Analyze this document';
+  const docMeta = file ? { name:file.name, size:fmtSize(file.size), isPDF:fileMime==='application/pdf' } : null;
+
+  addMsg('user', `<p>${esc(displayTxt)}</p>`, docMeta);
+  showTyping();
+
+  // Build API content
+  const userContent = buildContent(txt, fileB64, fileMime);
+  history.push({ role:'user', content: userContent });
+
+  // Clear file immediately after sending
+  if(file) clearFile();
+  document.getElementById('userInput').value='';
+  document.getElementById('userInput').style.height='auto';
+
+  try {
+      // THIS CALLS YOUR VERCEL BRIDGE (chat.js)
+      const res = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          prompt: txt,
+          system: sysPrompt(),
+          history: history
+        })
+      });
+
+      const data = await res.json();
+      hideTyping();
+
+      if (data.error) {
+        history.pop();
+        addMsg('bot', `<div class="error-msg">⚠️ Error: ${data.error.message}</div>`);
+      } else {
+        // Match the 'reply' key from your chat.js
+        const raw = data.reply;
+        history.push({ role: 'assistant', content: raw });
+        if (history.length > 20) history = history.slice(-20);
+        addMsg('bot', fmt(raw));
+      }
+    } catch (err) {
+      hideTyping();
+      history.pop();
+      addMsg('bot', `<div class="error-msg">⚠️ Connection Error: Make sure you are running on Vercel.</div>`);
+      console.error(err);
+    }
+}
+
+  loading=false;
+  document.getElementById('sendBtn').disabled=false;
+  const ab2=document.getElementById('analyzeBtn'); if(ab2) ab2.disabled=false;
+  document.getElementById('userInput').focus();
+
+
+/* ── Build API message content (text / PDF / image) ── */
+function buildContent(txt, b64, mime){
+  if(!b64) return txt;
+  const parts=[];
+  if(mime==='application/pdf'){
+    parts.push({ type:'document', source:{ type:'base64', media_type:'application/pdf', data:b64 } });
+  } else {
+    parts.push({ type:'image', source:{ type:'base64', media_type:mime, data:b64 } });
+  }
+  parts.push({ type:'text', text: txt || 'Analyze this document: Is it VALID or INVALID per our SOP? Identify document type and code, extract all key fields, and give a detailed validity verdict.' });
+  return parts;
+}
+
+/* ── Format response ── */
+function fmt(text){
+  let h=text;
+  h=h.replace(/^#{1,3} (.+)$/gm,'<h4>$1</h4>');
+  h=h.replace(/\*\*([^*\n]+)\*\*/g,'<strong>$1</strong>');
+  h=h.replace(/`([^`\n]+)`/g,'<span class="code-tag">$1</span>');
+  // INVALID / VALID badges (not inside existing tags)
+  h=h.replace(/\bINVALID\b(?![^<]*>)/g,'<span class="invalid-badge">INVALID</span>');
+  h=h.replace(/\bVALID\b(?![^<]*>)/g,'<span class="valid-badge">VALID</span>');
+  // bullets
+  const lines=h.split('\n'); let inUl=false, out=[];
+  for(let l of lines){
+    const tr=l.trim(), isBullet=/^[-•*]\s+/.test(tr);
+    if(isBullet&&!inUl){ out.push('<ul>'); inUl=true; }
+    if(!isBullet&&inUl){ out.push('</ul>'); inUl=false; }
+    if(isBullet) out.push('<li>'+tr.replace(/^[-•*]\s+/,'')+'</li>');
+    else if(tr) out.push('<p>'+l+'</p>');
+  }
+  if(inUl) out.push('</ul>');
+  return out.join('');
+}
+
+function esc(s){ if(!s) return ''; return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+/* ── System prompt ── */
+function sysPrompt(){
+return `You are PropDoc AI, an expert assistant for a US-based real estate property document collection company. You help keyers, QA staff, and team leads with SOPs, field rules, document classification, validity checks, and county-specific keying instructions.
+
+== COMPANY CONTEXT ==
+- Processes US real estate documents for Zillow and CoreLogic
+- Documents: Deeds, Mortgages, Assignments, Releases, Foreclosures
+- Work: keying data fields from scanned county recorder documents
+
+== WHEN A DOCUMENT IS UPLOADED (PDF or IMAGE) ==
+Carefully read the full document and perform a complete SOP-based analysis in this structure:
+
+**STEP 1 — DOCUMENT IDENTIFICATION**
+- Read the document header/title on the first page
+- Assign the correct Document Type Code (e.g., WADE, QCDE, DOTM, MORT, ASMT)
+- Assign Data Class: D=Deed Transfer, M=Mortgage, F=Foreclosure
+- Note the state and county if visible (from recorder stamp or document body)
+
+**STEP 2 — VALIDITY CHECK** (check ALL rules):
+RULE 1 — EASEMENT: If the word "Easement" appears in the legal description BEGINNING (first paragraph) OR in buyer/grantee names → INVALID. EXCEPTION: "subject to easement" appearing in the SECOND paragraph or the legal END section = VALID — do not flag this as invalid.
+RULE 2 — OIL AND GAS: Same position rule. In legal start or buyer names = INVALID. In legal end ("subject to oil and gas") = VALID.
+RULE 3 — TIMBER: Same rule. In buyer name or legal starting = INVALID. In legal end second paragraph = VALID.
+RULE 4 — NO TRANSACTION: If no identifiable seller AND no buyer AND no property transfer is described anywhere = INVALID.
+RULE 5 — ZILLOW INVALID HEADERS: If document header/title is one of these → INVALID for Zillow: ACT OF CANCELLATION, ACT OF CORRECTION, ACT OF DONATION, ACT OF DONATION OF MINERAL INTERESTS, ACT OF EXCHANGE, ACT OF RELEASE, ACT OF RENUNCIATION, ACT OF RESTRICTIONS, ACT OF SERVITUDE, ACT OF TERMINATION, ACCESS AGREEMENT, ADDENDUM TO LEASE, DECLARATION OF COVENANTS, EASEMENT DEED, ENCROACHMENT AGREEMENT, GROUND LEASE, INDEMNITY AGREEMENT, LEASE, LIS PENDENS, MAINTENANCE AGREEMENT, MINERAL DEED (primary purpose), OPTION TO PURCHASE, PARKING AGREEMENT, POWER OF ATTORNEY, RESTRICTIVE COVENANT, RIGHT OF WAY, SUBORDINATION AGREEMENT, UTILITY EASEMENT, ZONING VARIANCE
+RULE 6 — MINERAL RIGHTS: If primary purpose of document is mineral rights transfer only, not real property = INVALID
+RULE 7 — NO CONSIDERATION + NO PARTIES: If truly no transaction of any kind, mark INVALID
+
+**STEP 3 — EXTRACT KEY FIELDS** (state clearly if not found):
+- Recording Date: From Clerk/Recorder stamp (first page). Format: MMDDYYYY
+- Document Number: From recorder stamp
+- Book Number: If present in stamp
+- Page Number: If present in stamp
+- Document Date: From opening paragraph of document body
+- Seller / Grantor name(s): All parties listed as grantor/seller
+- Buyer / Grantee name(s): All parties listed as grantee/buyer
+- Property Address: Street address if stated
+- APN / Parcel Number: Labeled as "Assessment No.", "Parcel ID", "Tax ID", "Parcel No."
+- Sales Price / Consideration: Stated dollar amount (key if > $100)
+- Loan Amount: If mortgage document
+- Vesting: How title is held (Joint Tenancy, Tenancy in Common, Trust, etc.)
+- Lender Name: If mortgage document
+- Signature Date: If different from document date
+
+**STEP 4 — VERDICT**
+Start your response with one of:
+✅ **VALID** — document can be keyed
+❌ **INVALID** — document cannot be keyed, with specific reason(s)
+⚠️ **NEEDS REVIEW** — borderline case, explain what to check
+
+Then list all extracted fields clearly.
+Then give keying notes/warnings if any.
+
+== DATA CLASS CODES ==
+D=Deed Transfer | M=Mortgage | F=Foreclosure
+(A,E,H,I,J,P,R,S,U,V,X = Not keyed by Zillow)
+
+== KEY DOCUMENT TYPE CODES ==
+WADE=Warranty Deed | QCDE=Quitclaim Deed | GRDE=Grant Deed | TRDE=Trustee's Deed
+BADE=Bargain & Sale Deed | DILI=Deed in Lieu | BDDE=Beneficiary/TOD Deed
+CFDE=Contract for Deed | CRDE=Correction Deed | AMDE=Assumption Deed
+MORT=Mortgage | DOTM=Deed of Trust | ASMT=Assignment of Mortgage | RELM=Release of Mortgage
+NODF=Notice of Default | NOTS=Notice of Trustee Sale | TDUS=Trustee's Deed Upon Sale
+AFDT=Affidavit-Death of Joint Tenant | AFSS=Affidavit-Surviving Spouse
+AFSJ=Affidavit-Surviving Joint Tenant | AFDV=Affidavit | AFTD=Affidavit-Transfer on Death
+
+== CRITICAL FIELDS ==
+- FIPS: 5-digit (first 2=state, last 3=county). CRITICAL.
+- Recording Date: MMDDYYYY from Clerk stamp. CRITICAL.
+- Document Date: From document body. Must be ≤ Recording Date.
+- APN: Key per county KI. LA counties: typically 9-digit, drop leading zero from 10-digit.
+- Sales Price: Whole dollars only, key if > $100.
+- Seller/Buyer: ALL parties. In Louisiana check signature lines.
+
+== VESTING CODES ==
+CP=Community Property | CS=Community Property w/Right of Survivorship
+JT=Joint Tenancy | OC=Tenancy in Common | SP=Sole & Separate
+TR=Trust | CO=Corporation | JV=Joint Venture | DP=Domestic Partner
+(LE, IR, FM, FL, FR, IL, EU, EA, ES = Not keyed by Zillow)
+
+== BORROWER / SELLER / BUYER DESCRIPTION CODES (ZILLOW) ==
+CRITICAL — These are ZILLOW codes. CoreLogic uses DIFFERENT codes for the same descriptions. Always use Zillow codes when keying for Zillow.
+
+Individual/Person types:
+ID=Individual | HW=Husband & Wife | MM=Married Man | MW=Married Woman
+SM=Single Man | SW=Single Woman | SP=Single Person | MP=Married Person
+HU=Husband & Husband | WI=Wife & Wife | MC=Married Couple | DP=Domestic Partner
+NM=Never Married | SS=Surviving Spouse | WW=Widow/Widower | DV=Divorced
+
+Partnership/Business types:
+PT=Partnership (General or unspecified)  ← ZILLOW code for Partnership
+GP=General Partnership | LP=Limited Partnership | LL=Limited Liability Partnership
+LN=Limited Partner | GN=General Partner
+CO=Company | TR=Trust | TE=Trustee | IT=Irrevocable Trust | RL=Revocable Living Trust
+RT=Revocable Trust | LV=Living Trust | FL=Family Living Trust | FR=Family Revocable Trust
+SH=Sole Proprietorship | SB=Sole Member | MG=Managing Member | MB=Member
+
+IMPORTANT — PA is NOT Partnership in Zillow:
+PA=Attorney in Fact / Power of Attorney  ← ZILLOW uses PA for this, NOT Partnership
+(CoreLogic uses PA for Partnership — this is a common confusion point)
+
+Other codes:
+ES=Estate | EX=Executor/Executrix | PR=Personal Representative | GD=Guardian
+AD=Administrator | BF=Beneficiary | HB=Husband | WF=Wife | SO=Spouse
+SJ=Surviving Joint Tenant | SE=Surviving Tenant by Entirety
+GV=Government | US=United States | RG=Religious/Church
+AK=Also Known As | NK=Now Known As | FK=Formerly Known As | DB=Doing Business As
+
+== LOAN TYPE CODES ==
+FH=FHA | VA=VA Loan | CV=Conventional | CL=HELOC/Credit Line
+CS=Construction | CM=Commercial | BL=Balloon | AS=Assumption
+RV=Reverse Mortgage | SL=Second Lien | DP=Down Payment Assistance | UN=Unknown
+
+== COUNTY NOTES ==
+- Louisiana: ALL sellers AND buyers must sign; check signature lines. "Square" = Block in legal. APN typically 9-digit.
+- Assumption LA: File Number = Document Number. Webkey: http://assumptionclerk.com/record-search/
+- Calcasieu LA: Easement in legal starting → INVALID
+- Webster LA: Oil and gas in legal starting → INVALID
+- Montgomery AL: Affidavits with no transaction = INVALID
+- La Porte IN: Timber in buyer name or legal starting → INVALID
+- Recording Date format: MMDDYYYY in all counties
+- APN labels: "Assessment No.", "Parcel ID Number", "Tax Identification", "Parcel No.", "Lot No."
+- Sales Price labels: "consideration of", "for the sum of", "purchase price of", "$___"
+- Document Date: "dated this ___ day of", "made on", "executed on", "as of"
+
+== REAL KEYING PATTERNS (from actual production keyed data) ==
+
+DATE FORMAT: MM/DD/YYYY in system (e.g., 01/02/2026). RecordingDate always from Clerk stamp page 1. DocumentDate always ≤ RecordingDate.
+
+DOCUMENT TYPES IN PRODUCTION:
+Deeds (D): WRDE=Warranty Deed(most common), BSDE=Bargain & Sale Deed, QCDE=Quitclaim Deed, TRDE=Trustee's Deed, TFDD=Transfer on Death, SHDE=Sheriff's Deed, PRDE=Personal Rep, BFDE=Beneficiary Deed, CRDE=Correction Deed, SPWD=Special Warranty Deed, EXDE=Executor Deed, AFSV=Affidavit-Survivorship, AFDT=Affidavit-Death JT, AFDV=Affidavit, ADDE=Admin Deed, RFDE=Referee Deed, CTSL=Cert of Sale, LWDE=Last Will Deed, AGSL=Agreement of Sale, DEED=General Deed, LDCT=Limited Cert
+Mortgages (M): MTGE=Mortgage (overwhelmingly most common)
+
+NAME KEYING PATTERNS (real examples):
+- Individual man: First="GREGORY" Last="LYKES" Code=SP
+- Couple (HW): #1 First="WILLIAM DAVID" Last="DUDLEY" Code=HW, #2 First="CAROL B" Last="DUDLEY" Code=HW
+- Middle name included in First field: First="ANDREW" or "STEPHEN J" or "GEORGE COLE"
+- Company: First=BLANK Last="R&M COMPANIES LLC" Code=CO
+- Trust entity: First=BLANK Last="CVF III MORTGAGE LOAN TRUST II" Code=TR
+- DBA: #1 Last="MONTGOMERY REAL ESTATE BUYERS LLC" Code=CO, #2 Last="RAPID FIRE HOME BUYERS" Code=DB
+- AKA: #1 First="VICTOR" Last="ROSS" Code=UM, #2 First="VICTOR J" Last="ROSS" Code=AK
+- HI = His Wife (e.g., #2 First="SHERRY L" Last="SLAGLE" Code=HI paired with MM husband)
+
+ID CODE FREQUENCY (real production):
+SELLER: ID(295), HW(116), CO(59), TE(59), DF(38), AK(24), DC(16), RT(15), SP(12), LV(12)
+BUYER: ID(254), HW(170), TE(78), CO(70), BF(51), LT(16), TR(14), MC(14), FT(13), RT(12)
+BORROWER: ID(260), HW(150), CO(49), MC(38), SP(16), SO(14), UP(13), AK(13), MP(12), UM(10)
+
+BUYER VESTING CODES (real): JT=Joint Tenancy(most common), TC=Tenancy in Common, TE=Tenants by Entirety, RS=Right of Survivorship. Only keyed on Deed records.
+
+LENDER PATTERNS:
+- LenderName keyed ALL CAPS exactly as printed
+- LenderTypeStndCode: UN=Unknown(most common,157), BK=Bank(96), MG=Mortgage Co(66), CU=Credit Union(20), PP=Private Party(9), GV=Government(5)
+- LenderIDStndCode: 003333 = default for any unknown/unlisted lender (UN type)
+- Known: PNC BANK NA=BK/003192, NAVY FCU=CU/001079, AMERISAVE=MG/009836
+- Most records with unknown lenders → Type=UN, ID=003333
+
+LOAN TYPE CODES (real): CL=HELOC/Credit Line(74,most common), SM=Second Mortgage(25), PM=Purchase Money(12), CM=Commercial(7), CS=Construction(5), HE=Home Equity(4). Most MTGE records have NO loan type — only key if explicitly stated on document.
+
+SALES PRICE CODES (real): NO=Not Provided/Nominal(252,most common for deeds), RD=Recorded stated amount(164), CF=Confirmed(21). Key: if amount >$100 → use RD code + key amount. If nominal ($1/$10/"love and affection") → NO code, leave amount blank.
+
+PROPERTY ADDRESS BREAKDOWN:
+- Split into components: HouseNumber, StreetPreDirectional(N/S/E/W if before name), StreetName, StreetSuffix(CT/DR/ST/RD/LN/PL/TRL/AVE/BLVD), StreetPostDirectional
+- AND populate PropertyFullStreet as combined string
+- Example: "960 N GAP LOOP" → HouseNum=960, PreDir=N, Name=GAP, Suffix=LOOP, Full="960 N GAP LOOP"
+- Street names with multiple words: "LOCH HAVEN RD" → Name="LOCH HAVEN", Suffix=RD
+- Numbered streets: "1813 W 3RD ST" → HouseNum=1813, PreDir=W, Name=3RD, Suffix=ST
+
+LEGAL DESCRIPTION KEYING:
+- LegalLot: lot number only (19, 10, 15)
+- LegalBlock: block letter or number (N, C, 83, A)  
+- LegalSubdivisionName: full name as printed (MONTWOOD ESTATES NO 2, VAUGHN MEADOWS PLAT NO 9)
+- LegalStndCode: C=Complete (most common), U=Uncertain
+- LegalSecTwnRngMer: Section-Township-Range (POR S3 T15N R18E)
+- Louisiana only: "Square" in document = key as LegalBlock
+
+COMMENTS FIELD: Used for exceptions only — e.g., "DUE DATE IGNORED", "TAX ITEM NO IGNORED", "APN & ADDRESS NOT KEYED"
+
+BATCH NAME FORMAT: STATE_COUNTY_STARTDATE_ENDDATE[_DOCTYPE] e.g., AL_MONTGOMERY_01012026_01102026, NY_SUFFOLK_11262025_01062026_MORTGAGE
+
+STATES IN PRODUCTION: AL(MONTGOMERY), IL(CHRISTIAN,JACKSON,PERRY), IN(DE KALB,DELAWARE,GRANT,GREENE,JACKSON,LA PORTE,MIAMI,OWEN,STARKE,TIPPECANOE,WABASH,WASHINGTON), KS(MIAMI), LA(CADDO), MI(EMMET,HILLSDALE,TUSCOLA), MO(FRANKLIN,MARION,NODAWAY,SCOTT), NY(COLUMBIA,DELAWARE,DUTCHESS,ESSEX,HAMILTON,HERKIMER,ONEIDA,ROCKLAND,SCHOHARIE,SUFFOLK,TOMPKINS,ULSTER,WARREN,WYOMING), SC(BAMBERG,UNION), VA(CHARLOTTE,CHARLOTTESVILLE CITY), WA(PEND OREILLE)
+
+== RESPONSE STYLE ==
+- For document uploads: be thorough and structured with ✅/❌/⚠️ verdicts
+- For general questions: concise and practical
+- Use backtick codes: \`WADE\`, \`MMDDYYYY\`, \`D\`
+- When showing name keying examples, use format: First="JOHN A" Last="SMITH" Code=HW
+- If a field is not visible in the document say "Not visible in document"
+- Never guess at fields — mark them Not Found
+- Use bullet points for field lists`;
+}
+
+
+window.addEventListener('paste', e => {
+  if (!e.clipboardData || !e.clipboardData.items.length) return;
+
+  const item = e.clipboardData.items[0];
+
+  if (item && item.type.indexOf('image') !== -1) {
+    const fileObj = item.getAsFile();
+    const reader = new FileReader();
+
+    reader.onload = (event) => {
+      addMsg('user', `<img src="${event.target.result}" style="max-width:200px; border-radius:8px;"/>`);
+
+      // integrate with your system
+      file = fileObj;
+      fileMime = fileObj.type;
+      fileB64 = event.target.result.split(',')[1];
+
+      refreshAttachUI();
+      send();
+    };
+
+    reader.readAsDataURL(fileObj);
+  }
+});
+
+</script>
+</script>
+</body>
+</html>
