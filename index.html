@@ -269,7 +269,7 @@
         </div>
       </div>
     </div>
-     
+
     <!-- Inline attachment bar (above input) -->
     <div class="inline-attach-bar" id="inlineBar">
       <span class="iab-icon" id="iabIcon">📄</span>
@@ -299,14 +299,36 @@
       </div>
     </div>
   </div>
-  
+
 </div>
 
 <script>
 /* ── State ── */
 let file = null, fileB64 = null, fileMime = null;
 let loading = false;
-let history = [];   // conversation history for multi-turn
+let history = []; 
+
+/* ── Image Paste Support ── */
+window.addEventListener('paste', e => {
+  const item = e.clipboardData.items[0];
+  if (item && item.type.indexOf('image') !== -1) {
+    const fileObj = item.getAsFile();
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const base64 = event.target.result.split(',')[1];
+      addMsg('user', `<img src="${event.target.result}" style="max-width:200px; border-radius:8px;"/>`);
+      
+      // Set the file state for the send function
+      file = fileObj;
+      fileMime = fileObj.type;
+      fileB64 = base64;
+      
+      refreshAttachUI();
+      send(); // Auto-send the pasted image
+    };
+    reader.readAsDataURL(fileObj);
+  }
+});
 
 /* ── File helpers ── */
 function onDragOver(e){ e.preventDefault(); document.getElementById('uploadZone').classList.add('drag-over'); }
@@ -317,7 +339,6 @@ function onFileSelect(e){ const f=e.target.files[0]; if(f) loadFile(f); e.target
 function loadFile(f){
   const ok=['application/pdf','image/png','image/jpeg','image/webp','image/gif'];
   if(!ok.includes(f.type)){ alert('Please upload a PDF, PNG, JPG, WEBP, or GIF.'); return; }
-  if(f.size>20*1024*1024){ alert('File too large. Max 20 MB.'); return; }
   file=f; fileMime=f.type;
   const r=new FileReader();
   r.onload=ev=>{ fileB64=ev.target.result.split(',')[1]; refreshAttachUI(); };
@@ -327,20 +348,11 @@ function loadFile(f){
 function refreshAttachUI(){
   if(!file) return;
   const icon = fileMime==='application/pdf'?'📄':'🖼️';
-  const sz = fmtSize(file.size);
-  // sidebar
   document.getElementById('sbIcon').textContent=icon;
   document.getElementById('sbName').textContent=file.name;
-  document.getElementById('sbSize').textContent=sz;
   document.getElementById('sidebarPreview').style.display='block';
-  // inline bar
-  document.getElementById('iabIcon').textContent=icon;
-  document.getElementById('iabName').textContent=file.name;
-  document.getElementById('iabSize').textContent=sz;
   document.getElementById('inlineBar').classList.add('show');
   document.getElementById('inputWrap').classList.add('attached');
-  document.getElementById('attachBtn').classList.add('has');
-  document.getElementById('userInput').placeholder='Ask "Is this valid?" or "What type is this?" or "Extract the fields"…';
 }
 
 function clearFile(){
@@ -348,16 +360,6 @@ function clearFile(){
   document.getElementById('sidebarPreview').style.display='none';
   document.getElementById('inlineBar').classList.remove('show');
   document.getElementById('inputWrap').classList.remove('attached');
-  document.getElementById('attachBtn').classList.remove('has');
-  document.getElementById('userInput').placeholder='Ask about fields, document types, county KIs, validity rules…';
-}
-
-function fmtSize(b){ if(b<1024) return b+' B'; if(b<1048576) return (b/1024).toFixed(1)+' KB'; return (b/1048576).toFixed(1)+' MB'; }
-
-/* ── Analyze shortcut (sidebar button) ── */
-function quickAnalyze(){
-  document.getElementById('userInput').value='Please analyze this document: Is it VALID or INVALID per our SOP? Identify the document type and code, extract all key fields (Recording Date, Document Number, Book, Page, Seller, Buyer, APN, Sales Price, Loan Amount if any), and give your full validity verdict with specific reasons.';
-  send();
 }
 
 /* ── Input helpers ── */
@@ -367,7 +369,6 @@ function sq(t){ document.getElementById('userInput').value=t; send(); }
 
 /* ── DOM helpers ── */
 const msgsEl = document.getElementById('messages');
-
 function killWelcome(){ const w=document.getElementById('welcome'); if(w) w.remove(); }
 
 function addMsg(role, html, docMeta){
@@ -375,23 +376,16 @@ function addMsg(role, html, docMeta){
   const wrap=document.createElement('div'); wrap.className=`msg ${role}`;
   const av=document.createElement('div'); av.className=`avatar ${role}`; av.textContent=role==='bot'?'🤖':'👤';
   const bub=document.createElement('div'); bub.className=`bubble ${role}`;
-  if(docMeta){
-    bub.innerHTML=`<div class="doc-preview"><span class="dp-icon">${docMeta.isPDF?'📄':'🖼️'}</span><div><div class="dp-name">${esc(docMeta.name)}</div><div class="dp-meta">${docMeta.isPDF?'PDF Document':'Image'} · ${docMeta.size}</div></div></div>`;
-  }
-  const body=document.createElement('div'); body.innerHTML=html;
-  bub.appendChild(body);
+  bub.innerHTML = html;
   wrap.appendChild(av); wrap.appendChild(bub);
   msgsEl.appendChild(wrap);
   msgsEl.scrollTop=msgsEl.scrollHeight;
 }
 
 function showTyping(){
-  killWelcome();
   const d=document.createElement('div'); d.className='msg bot'; d.id='typing';
-  const av=document.createElement('div'); av.className='avatar bot'; av.textContent='🤖';
-  const bub=document.createElement('div'); bub.className='bubble bot';
-  bub.innerHTML='<div class="typing"><span></span><span></span><span></span></div>';
-  d.appendChild(av); d.appendChild(bub); msgsEl.appendChild(d);
+  d.innerHTML='<div class="avatar bot">🤖</div><div class="bubble bot"><div class="typing"><span></span><span></span><span></span></div></div>';
+  msgsEl.appendChild(d);
   msgsEl.scrollTop=msgsEl.scrollHeight;
 }
 function hideTyping(){ const t=document.getElementById('typing'); if(t) t.remove(); }
@@ -400,34 +394,26 @@ function hideTyping(){ const t=document.getElementById('typing'); if(t) t.remove
 async function send(){
   const txt=document.getElementById('userInput').value.trim();
   if((!txt&&!file)||loading) return;
+  
   loading=true;
   document.getElementById('sendBtn').disabled=true;
-  const ab=document.getElementById('analyzeBtn'); if(ab) ab.disabled=true;
+  document.getElementById('userInput').disabled=true;
 
-  const displayTxt = txt || '📎 Analyze this document';
-  const docMeta = file ? { name:file.name, size:fmtSize(file.size), isPDF:fileMime==='application/pdf' } : null;
-
-  addMsg('user', `<p>${esc(displayTxt)}</p>`, docMeta);
+  addMsg('user', `<p>${txt || '📎 Attached Document'}</p>`);
   showTyping();
 
-  // Build API content
-  const userContent = buildContent(txt, fileB64, fileMime);
-  history.push({ role:'user', content: userContent });
-
-  // Clear file immediately after sending
+  const currentB64 = fileB64; // Capture current file
   if(file) clearFile();
   document.getElementById('userInput').value='';
-  document.getElementById('userInput').style.height='auto';
 
   try {
-      // THIS CALLS YOUR VERCEL BRIDGE (chat.js)
       const res = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           prompt: txt,
           system: sysPrompt(),
-          history: history
+          imageBase64: currentB64 
         })
       });
 
@@ -435,41 +421,23 @@ async function send(){
       hideTyping();
 
       if (data.error) {
-        history.pop();
         addMsg('bot', `<div class="error-msg">⚠️ Error: ${data.error.message}</div>`);
       } else {
-        // Match the 'reply' key from your chat.js
-        const raw = data.reply;
-        history.push({ role: 'assistant', content: raw });
-        if (history.length > 20) history = history.slice(-20);
-        addMsg('bot', fmt(raw));
+        addMsg('bot', fmt(data.reply));
       }
     } catch (err) {
       hideTyping();
-      history.pop();
-      addMsg('bot', `<div class="error-msg">⚠️ Connection Error: Make sure you are running on Vercel.</div>`);
-      console.error(err);
+      addMsg('bot', `<div class="error-msg">⚠️ Connection Error. Check Vercel logs.</div>`);
+    } finally {
+      // THIS UNLOCKS THE INPUT BOX
+      loading = false;
+      document.getElementById('sendBtn').disabled = false;
+      document.getElementById('userInput').disabled = false;
+      document.getElementById('userInput').focus();
     }
 }
 
-  loading=false;
-  document.getElementById('sendBtn').disabled=false;
-  const ab2=document.getElementById('analyzeBtn'); if(ab2) ab2.disabled=false;
-  document.getElementById('userInput').focus();
-
-
-/* ── Build API message content (text / PDF / image) ── */
-function buildContent(txt, b64, mime){
-  if(!b64) return txt;
-  const parts=[];
-  if(mime==='application/pdf'){
-    parts.push({ type:'document', source:{ type:'base64', media_type:'application/pdf', data:b64 } });
-  } else {
-    parts.push({ type:'image', source:{ type:'base64', media_type:mime, data:b64 } });
-  }
-  parts.push({ type:'text', text: txt || 'Analyze this document: Is it VALID or INVALID per our SOP? Identify document type and code, extract all key fields, and give a detailed validity verdict.' });
-  return parts;
-}
+/* ── Formatting and System Prompt (Keep your existing versions of these) ── */
 
 /* ── Format response ── */
 function fmt(text){
@@ -685,34 +653,6 @@ STATES IN PRODUCTION: AL(MONTGOMERY), IL(CHRISTIAN,JACKSON,PERRY), IN(DE KALB,DE
 - Never guess at fields — mark them Not Found
 - Use bullet points for field lists`;
 }
-
-
-window.addEventListener('paste', e => {
-  if (!e.clipboardData || !e.clipboardData.items.length) return;
-
-  const item = e.clipboardData.items[0];
-
-  if (item && item.type.indexOf('image') !== -1) {
-    const fileObj = item.getAsFile();
-    const reader = new FileReader();
-
-    reader.onload = (event) => {
-      addMsg('user', `<img src="${event.target.result}" style="max-width:200px; border-radius:8px;"/>`);
-
-      // integrate with your system
-      file = fileObj;
-      fileMime = fileObj.type;
-      fileB64 = event.target.result.split(',')[1];
-
-      refreshAttachUI();
-      send();
-    };
-
-    reader.readAsDataURL(fileObj);
-  }
-});
-
-</script>
 </script>
 </body>
 </html>
