@@ -1,6 +1,6 @@
 module.exports = async function handler(req, res) {
 
-  const { prompt, system, imageBase64, fileMime } = req.body;
+  const { prompt, system, imageBase64, fileMime, sop } = req.body;
   const apiKey = process.env.GEMINI_API_KEY;
 
   if (!apiKey) {
@@ -58,7 +58,27 @@ module.exports = async function handler(req, res) {
         messages: [
           {
             role: "system",
-            content: system || "You are a helpful assistant"
+            content: `
+            ${system}
+       
+            STRICT SOP RULES:
+            ${JSON.stringify(sop.rules).slice(0, 3000)}
+
+            INVALID HEADERS:
+            ${JSON.stringify(sop.invalidHeaders).slice(0, 2000)}
+
+            INVALID CONTENT:
+            ${JSON.stringify(sop.invalidContent).slice(0, 2000)}
+
+            ZILLOW:
+            ${JSON.stringify(sop.zillow).slice(0, 2000)}
+  
+            COUNTIES KIS:
+            ${JSON.stringify(sop.countiesKIs).slice(0, 2000)}
+
+            Follow these strictly.
+            Do not guess.
+            `
           },
           {
             role: "user",

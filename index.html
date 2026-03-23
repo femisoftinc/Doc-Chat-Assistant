@@ -302,7 +302,15 @@
 
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/tesseract.js@4/dist/tesseract.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
 <script>
+  pdfjsLib.GlobalWorkerOptions.workerSrc =
+    "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js";
+</script>
+<script>
+let currentFile = null;
+
 /* ── State ── */
 let file = null, fileB64 = null, fileMime = null;
 let loading = false;
@@ -391,6 +399,67 @@ function showTyping(){
 function hideTyping(){ const t=document.getElementById('typing'); if(t) t.remove(); }
 
 /* ── Main send ── */
+//>>>>>
+async function extractFromImage(base64) {
+  const { data: { text } } = await Tesseract.recognize(
+    base64,
+    "eng"
+  );
+  return text;
+}
+/*//>>>>>>>>>>>>async function extractFromPDF(file) {
+  const buffer = await file.arrayBuffer();
+  const pdf = await pdfjsLib.getDocument({ data: buffer }).promise;
+
+  let text = "";
+
+  for (let i = 1; i <= pdf.numPages; i++) {
+    const page = await pdf.getPage(i);
+    const content = await page.getTextContent();
+    text += content.items.map(item => item.str).join(" ");
+  }
+
+  return text;
+}*/addMsg
+async function extractFromPDF(file) {
+  try {
+    const buffer = await file.arrayBuffer();
+    const pdf = await pdfjsLib.getDocument({ data: buffer }).promise;
+
+    let text = "";
+
+    for (let i = 1; i <= pdf.numPages; i++) {
+      const page = await pdf.getPage(i);
+      const content = await page.getTextContent();
+
+      text += content.items.map(item => item.str).join(" ") + "\n";
+    }
+
+    console.log("PDF TEXT:", text);
+
+    return text;
+
+  } catch (err) {
+    console.error("PDF ERROR:", err);
+    return "";
+  }
+}
+async function loadRules() {
+  const rules = await fetch('/rules.json').then(r => r.json());
+  const invalidHeaders = await fetch('/invalid_headers.json').then(r => r.json());
+  const invalidContent = await fetch('/invalid_content.json').then(r => r.json());
+  const zillow = await fetch('/zillow.json').then(r => r.json());
+  const countiesKIs = await fetch('/counties_KIs.json').then(r => r.json());
+
+
+  return {
+    rules,
+    invalidHeaders,
+    invalidContent,
+    zillow,
+    countiesKIs
+  };
+}
 async function send(){
   const txt=document.getElementById('userInput').value.trim();
   if((!txt&&!file)||loading) return;
@@ -402,18 +471,46 @@ async function send(){
   addMsg('user', `<p>${txt || '📎 Attached Document'}</p>`);
   showTyping();
 
-  const currentB64 = fileB64; // Capture current file
+  //>>>>const fileB64  = fileB64; // Capture current file
+  let finalText = txt;
+
+  if (file) {
+    if (fileMime.includes("image")) {
+      finalText = await extractFromImage(fileB64);
+    } 
+    else if (fileMime === "application/pdf") {
+      finalText = await extractFromPDF(file);
+    }
+  }
+  /*>>>>>>>>if (!finalText || finalText.length < 20) {
+  addMsg('bot', '⚠️ Document not readable. Please upload a clear PDF or image.');
+  return;
+  }*/
+
+  if (!finalText || finalText.length < 20) {
+
+    hideTyping();
+
+    loading = false;
+    document.getElementById('sendBtn').disabled = false;
+    document.getElementById('userInput').disabled = false;
+
+    addMsg('bot', '⚠️ Document not readable. Please upload a clear PDF or image.');
+    return;
+  }
+
   if(file) clearFile();
   document.getElementById('userInput').value='';
 
   try {
+      const SOP = await loadRules();
       const res = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          prompt: txt,
+          prompt: finalText,
           system: sysPrompt(),
-          imageBase64: currentB64 
+          sop: SOP
         })
       });
 
@@ -425,6 +522,7 @@ async function send(){
       } else {
         addMsg('bot', fmt(data.reply));
       }
+      
     } catch (err) {
       hideTyping();
       addMsg('bot', `<div class="error-msg">⚠️ Connection Error. Check Vercel logs.</div>`);
@@ -466,7 +564,13 @@ function esc(s){ if(!s) return ''; return String(s).replace(/&/g,'&amp;').replac
 /* ── System prompt ── */
 function sysPrompt(){
 return `You are PropDoc AI, an expert assistant for a US-based real estate property document collection company. You help keyers, QA staff, and team leads with SOPs, field rules, document classification, validity checks, and county-specific keying instructions.
+IMPORTANT RULES:
+- Only use the provided document text
+- Do NOT guess
+- If data is missing → say "Not found in document"
+- If document text is empty → say "Document not readable"
 
+Always base answer ONLY on given content.
 == COMPANY CONTEXT ==
 - Processes US real estate documents for Zillow and CoreLogic
 - Documents: Deeds, Mortgages, Assignments, Releases, Foreclosures
