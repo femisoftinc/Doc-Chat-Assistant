@@ -70,7 +70,8 @@ module.exports = async function handler(req, res) {
 
     const data = await response.json();
 
-    console.log("FULL RESPONSE:", data); // debug
+    console.log("STATUS:", response.status);
+    console.log("DATA:", data);
 
     if (!response.ok) {
       return res.status(500).json({
