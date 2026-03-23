@@ -54,7 +54,7 @@ module.exports = async function handler(req, res) {
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
-        model: "openchat/openchat-3.5-0106",
+        model: "stepfun/step-3.5-flash",
         messages: [
           {
             role: "system",
