@@ -66,13 +66,25 @@ module.exports = async function handler(req, res) {
           }
         ]
       })
-    });
+    }); 
 
     const data = await response.json();
 
-    const resultText =
-      data.choices?.[0]?.message?.content ||
-      "No response";
+    console.log("FULL RESPONSE:", data); // debug
+
+    if (!response.ok) {
+      return res.status(500).json({
+        error: data.error?.message || "OpenRouter Error"
+      });
+    }
+
+    const resultText = data.choices?.[0]?.message?.content;
+
+    if (!resultText) {
+      return res.status(500).json({
+         error: "No response from AI"
+      });
+    }
 
     res.status(200).json({ reply: resultText });
 
