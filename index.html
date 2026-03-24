@@ -14,8 +14,6 @@
   }
   *{box-sizing:border-box;margin:0;padding:0}
   body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);height:100vh;display:flex;flex-direction:column;overflow:hidden}
-
-  /* HEADER */
   header{background:var(--surface);border-bottom:1px solid var(--border);padding:0 24px;height:60px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
   .logo{display:flex;align-items:center;gap:10px}
   .logo-icon{width:32px;height:32px;background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px}
@@ -26,11 +24,7 @@
   .tag.active{border-color:var(--accent);color:var(--accent)}
   .status-dot{width:8px;height:8px;border-radius:50%;background:var(--green);display:inline-block;margin-right:6px;box-shadow:0 0 6px var(--green);animation:pulse 2s infinite}
   @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
-
-  /* LAYOUT */
   .main{display:flex;flex:1;overflow:hidden}
-
-  /* SIDEBAR */
   .sidebar{width:260px;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;overflow-y:auto}
   .sidebar-section{padding:16px;border-bottom:1px solid var(--border)}
   .sidebar-title{font-family:'JetBrains Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted);margin-bottom:12px}
@@ -41,8 +35,6 @@
   .stat-chip{background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:8px;text-align:center}
   .stat-num{font-family:'Syne',sans-serif;font-weight:700;font-size:18px;color:var(--accent)}
   .stat-label{font-size:10px;color:var(--muted);margin-top:2px}
-
-  /* UPLOAD ZONE */
   .upload-zone{border:1.5px dashed var(--border);border-radius:10px;padding:16px 12px;text-align:center;cursor:pointer;transition:all 0.2s;position:relative}
   .upload-zone:hover,.upload-zone.drag-over{border-color:var(--accent);background:rgba(0,194,255,0.05)}
   .upload-zone input[type="file"]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
@@ -50,8 +42,6 @@
   .upload-text{font-size:12px;color:var(--muted);line-height:1.5}
   .upload-text strong{color:var(--text);display:block;font-size:13px;margin-bottom:2px}
   .upload-formats{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--accent);margin-top:6px}
-
-  /* FILE PREVIEW */
   .attached-file{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:10px 12px;margin-top:8px;display:flex;align-items:center;gap:10px;font-size:12.5px}
   .attached-file .file-icon{font-size:20px;flex-shrink:0}
   .attached-file .file-info{flex:1;min-width:0}
@@ -62,14 +52,11 @@
   .analyze-btn{width:100%;margin-top:8px;background:linear-gradient(135deg,rgba(0,194,255,0.15),rgba(59,130,246,0.15));border:1px solid var(--accent);border-radius:8px;padding:10px;color:var(--accent);font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;justify-content:center;gap:6px}
   .analyze-btn:hover{background:rgba(0,194,255,0.2)}
   .analyze-btn:disabled{opacity:0.4;cursor:not-allowed}
-
-  /* CHAT */
   .chat-area{flex:1;display:flex;flex-direction:column;overflow:hidden}
   .messages{flex:1;overflow-y:auto;padding:24px;display:flex;flex-direction:column;gap:16px;scroll-behavior:smooth}
   .messages::-webkit-scrollbar{width:4px}
   .messages::-webkit-scrollbar-track{background:transparent}
   .messages::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
-
   .msg{display:flex;gap:12px;max-width:840px;animation:fadeUp 0.3s ease}
   @keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
   .msg.user{align-self:flex-end;flex-direction:row-reverse}
@@ -79,14 +66,6 @@
   .bubble{padding:12px 16px;border-radius:12px;font-size:14px;line-height:1.65;max-width:700px}
   .bubble.bot{background:var(--bot-bubble);border:1px solid var(--border);border-top-left-radius:4px}
   .bubble.user{background:var(--user-bubble);border:1px solid rgba(59,130,246,0.3);border-top-right-radius:4px}
-
-  /* DOC PREVIEW IN BUBBLE */
-  .doc-preview{background:rgba(0,194,255,0.08);border:1px solid rgba(0,194,255,0.2);border-radius:8px;padding:8px 12px;margin-bottom:8px;display:flex;align-items:center;gap:10px}
-  .doc-preview .dp-icon{font-size:20px}
-  .doc-preview .dp-name{font-weight:500;color:var(--accent);font-size:13px}
-  .doc-preview .dp-meta{font-size:11px;color:var(--muted);margin-top:2px}
-
-  /* BUBBLE CONTENT */
   .bubble h4{font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:var(--accent);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px}
   .bubble p{margin-bottom:8px}
   .bubble p:last-child{margin-bottom:0}
@@ -96,38 +75,11 @@
   .bubble ul{list-style:none;padding:0;margin:6px 0}
   .bubble ul li{padding:3px 0 3px 16px;position:relative;font-size:13.5px}
   .bubble ul li::before{content:'›';position:absolute;left:0;color:var(--accent);font-weight:bold}
-
-  /* VERDICT CARD */
-  .verdict-card{border-radius:10px;padding:14px 16px;margin:10px 0;border:1.5px solid}
-  .verdict-card.vc-valid{background:rgba(16,185,129,0.08);border-color:rgba(16,185,129,0.4)}
-  .verdict-card.vc-invalid{background:rgba(239,68,68,0.08);border-color:rgba(239,68,68,0.4)}
-  .verdict-card.vc-review{background:rgba(249,115,22,0.08);border-color:rgba(249,115,22,0.4)}
-  .verdict-header{display:flex;align-items:center;gap:10px;margin-bottom:8px}
-  .verdict-icon{font-size:22px}
-  .verdict-label{font-family:'Syne',sans-serif;font-size:15px;font-weight:700}
-  .vc-valid .verdict-label{color:var(--green)}
-  .vc-invalid .verdict-label{color:var(--red)}
-  .vc-review .verdict-label{color:var(--orange)}
-
-  /* FIELD TABLE */
-  .field-table{background:var(--surface2);border:1px solid var(--border);border-radius:8px;margin:8px 0;overflow:hidden}
-  .ft-head{background:rgba(0,194,255,0.08);padding:7px 12px;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--accent);text-transform:uppercase;letter-spacing:1px;border-bottom:1px solid var(--border)}
-  .ft-row{display:flex;padding:7px 12px;border-bottom:1px solid rgba(30,45,69,0.5);font-size:13px;align-items:flex-start;gap:8px}
-  .ft-row:last-child{border-bottom:none}
-  .ft-key{color:var(--muted);width:165px;flex-shrink:0;font-size:12px;padding-top:1px}
-  .ft-val{font-weight:500;word-break:break-word}
-  .ft-val.found{color:var(--green)}
-  .ft-val.missing{color:var(--red);font-style:italic;font-weight:400}
-  .ft-val.warn{color:var(--orange)}
-
-  /* TYPING */
   .typing{display:flex;align-items:center;gap:4px;padding:8px 0}
   .typing span{width:6px;height:6px;border-radius:50%;background:var(--accent);animation:bounce 1.2s infinite}
   .typing span:nth-child(2){animation-delay:0.2s}
   .typing span:nth-child(3){animation-delay:0.4s}
   @keyframes bounce{0%,60%,100%{transform:translateY(0);opacity:0.4}30%{transform:translateY(-6px);opacity:1}}
-
-  /* INPUT BAR */
   .input-bar{padding:12px 24px 14px;background:var(--surface);border-top:1px solid var(--border)}
   .inline-attach-bar{display:none;align-items:center;gap:8px;background:rgba(0,194,255,0.06);border:1px solid rgba(0,194,255,0.25);border-radius:8px 8px 0 0;padding:7px 12px;font-size:12.5px;border-bottom:none}
   .inline-attach-bar.show{display:flex}
@@ -151,8 +103,6 @@
   .send-btn:active{transform:scale(0.95)}
   .send-btn:disabled{opacity:0.4;cursor:not-allowed}
   .input-hint{font-size:11px;color:var(--muted);margin-top:6px;display:flex;gap:16px}
-
-  /* WELCOME */
   .welcome{text-align:center;max-width:600px;margin:auto;padding:40px 20px}
   .welcome .w-icon{font-size:48px;margin-bottom:16px}
   .welcome h2{font-family:'Syne',sans-serif;font-size:26px;font-weight:800;margin-bottom:8px}
@@ -164,6 +114,7 @@
   .upload-callout .uc-icon{font-size:24px;flex-shrink:0}
   .upload-callout strong{color:var(--accent);display:block;margin-bottom:4px;font-size:14px}
   .error-msg{color:var(--red);font-size:13px;padding:8px 12px;background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.2);border-radius:8px;margin-top:6px}
+  .progress-msg{color:var(--accent);font-size:12px;font-family:'JetBrains Mono',monospace;margin-top:4px;text-align:center}
 </style>
 </head>
 <body>
@@ -181,15 +132,12 @@
 </header>
 
 <div class="main">
-
-  <!-- SIDEBAR -->
   <div class="sidebar">
-
     <div class="sidebar-section">
       <div class="sidebar-title">Knowledge Base</div>
       <div class="kb-stats">
         <div class="stat-chip"><div class="stat-num">332</div><div class="stat-label">Fields</div></div>
-        <div class="stat-chip"><div class="stat-num">165</div><div class="stat-label">Doc Types</div></div>
+        <div class="stat-chip"><div class="stat-num">165</div><div class="stat-num stat-label">Doc Types</div></div>
         <div class="stat-chip"><div class="stat-num">48</div><div class="stat-label">Counties</div></div>
         <div class="stat-chip"><div class="stat-num">48</div><div class="stat-label">Invalid Rules</div></div>
       </div>
@@ -208,7 +156,6 @@
         </div>
         <div class="upload-formats">PDF · PNG · JPG · WEBP</div>
       </div>
-
       <div id="sidebarPreview" style="display:none">
         <div class="attached-file">
           <div class="file-icon" id="sbIcon">📄</div>
@@ -243,10 +190,8 @@
         <br><span style="color:var(--accent);font-size:10px;font-family:'JetBrains Mono',monospace">48 county KIs loaded</span>
       </div>
     </div>
-
   </div>
 
-  <!-- CHAT -->
   <div class="chat-area">
     <div class="messages" id="messages">
       <div class="welcome" id="welcome">
@@ -270,7 +215,6 @@
       </div>
     </div>
 
-    <!-- Inline attachment bar (above input) -->
     <div class="inline-attach-bar" id="inlineBar">
       <span class="iab-icon" id="iabIcon">📄</span>
       <span class="iab-name" id="iabName">—</span>
@@ -282,9 +226,9 @@
       <div class="input-row">
         <div class="input-wrap" id="inputWrap">
           <textarea id="userInput"
-            placeholder="Ask about fields, document types, county KIs, validity rules…"
+            placeholder="Ask about fields, document types, county KIs, validity rules… or attach a file above"
             rows="1" onkeydown="onKey(event)" oninput="resize(this)"></textarea>
-          <div class="attach-inline-btn" id="attachBtn" title="Attach PDF or image (PDF · PNG · JPG · WEBP)">
+          <div class="attach-inline-btn" id="attachBtn" title="Attach PDF or image">
             📎
             <input type="file" id="fileInputInline" accept=".pdf,.png,.jpg,.jpeg,.webp,.gif"
                    onchange="onFileSelect(event)">
@@ -297,469 +241,421 @@
         <span>Shift+↵ New line</span>
         <span>📎 Attach PDF or image to check validity</span>
       </div>
+      <div class="progress-msg" id="progressMsg"></div>
     </div>
   </div>
-
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/tesseract.js@4/dist/tesseract.min.js"></script>
+<!-- ✅ Load PDF.js only (Tesseract removed — we send images directly to vision AI) -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
 <script>
   pdfjsLib.GlobalWorkerOptions.workerSrc =
     "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js";
 </script>
+
 <script>
-let currentFile = null;
-
 /* ── State ── */
-let file = null, fileB64 = null, fileMime = null;
+let file = null;
+let fileB64 = null;     // base64 string WITHOUT data: prefix
+let fileMime = null;
 let loading = false;
-let history = []; 
+let history = [];       // ✅ FIX: conversation history for context
 
-/* ── Image Paste Support ── */
+/* ── Paste image support ── */
 window.addEventListener('paste', e => {
-  const item = e.clipboardData.items[0];
-  if (item && item.type.indexOf('image') !== -1) {
-    const fileObj = item.getAsFile();
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      const base64 = event.target.result.split(',')[1];
-      addMsg('user', `<img src="${event.target.result}" style="max-width:200px; border-radius:8px;"/>`);
-      
-      // Set the file state for the send function
-      file = fileObj;
-      fileMime = fileObj.type;
-      fileB64 = base64;
-      
-      refreshAttachUI();
-      send(); // Auto-send the pasted image
-    };
-    reader.readAsDataURL(fileObj);
+  const items = e.clipboardData.items;
+  for (let item of items) {
+    if (item.type.indexOf('image') !== -1) {
+      e.preventDefault();
+      loadFile(item.getAsFile());
+      setProgress('📋 Image pasted — click ➤ to analyze');
+      break;
+    }
   }
 });
 
-/* ── File helpers ── */
+/* ── Drag & drop ── */
 function onDragOver(e){ e.preventDefault(); document.getElementById('uploadZone').classList.add('drag-over'); }
 function onDragLeave(){ document.getElementById('uploadZone').classList.remove('drag-over'); }
-function onDrop(e){ e.preventDefault(); document.getElementById('uploadZone').classList.remove('drag-over'); const f=e.dataTransfer.files[0]; if(f) loadFile(f); }
-function onFileSelect(e){ const f=e.target.files[0]; if(f) loadFile(f); e.target.value=''; }
+function onDrop(e){
+  e.preventDefault();
+  document.getElementById('uploadZone').classList.remove('drag-over');
+  const f = e.dataTransfer.files[0];
+  if (f) loadFile(f);
+}
+function onFileSelect(e){
+  const f = e.target.files[0];
+  if (f) loadFile(f);
+  e.target.value = ''; // reset so same file can be re-selected
+}
 
+/* ── Load file → base64 ── */
 function loadFile(f){
-  const ok=['application/pdf','image/png','image/jpeg','image/webp','image/gif'];
-  if(!ok.includes(f.type)){ alert('Please upload a PDF, PNG, JPG, WEBP, or GIF.'); return; }
-  file=f; fileMime=f.type;
-  const r=new FileReader();
-  r.onload=ev=>{ fileB64=ev.target.result.split(',')[1]; refreshAttachUI(); };
-  r.readAsDataURL(f);
+  const allowed = ['application/pdf','image/png','image/jpeg','image/webp','image/gif'];
+  if (!allowed.includes(f.type)){
+    alert('Please upload a PDF, PNG, JPG, WEBP, or GIF.');
+    return;
+  }
+  file = f;
+  fileMime = f.type;
+
+  const reader = new FileReader();
+  reader.onload = ev => {
+    // ✅ Store ONLY the base64 part (after the comma)
+    fileB64 = ev.target.result.split(',')[1];
+    refreshAttachUI();
+  };
+  reader.readAsDataURL(f);
 }
 
 function refreshAttachUI(){
-  if(!file) return;
-  const icon = fileMime==='application/pdf'?'📄':'🖼️';
-  document.getElementById('sbIcon').textContent=icon;
-  document.getElementById('sbName').textContent=file.name;
-  document.getElementById('sidebarPreview').style.display='block';
+  if (!file) return;
+  const icon = fileMime === 'application/pdf' ? '📄' : '🖼️';
+  const sizeKB = (file.size / 1024).toFixed(1);
+
+  // Sidebar
+  document.getElementById('sbIcon').textContent = icon;
+  document.getElementById('sbName').textContent = file.name;
+  document.getElementById('sbSize').textContent = sizeKB + ' KB';
+  document.getElementById('sidebarPreview').style.display = 'block';
+
+  // Input bar
+  document.getElementById('iabIcon').textContent = icon;
+  document.getElementById('iabName').textContent = file.name;
+  document.getElementById('iabSize').textContent = sizeKB + ' KB';
   document.getElementById('inlineBar').classList.add('show');
   document.getElementById('inputWrap').classList.add('attached');
+  document.getElementById('attachBtn').classList.add('has');
 }
 
 function clearFile(){
-  file=null; fileB64=null; fileMime=null;
-  document.getElementById('sidebarPreview').style.display='none';
+  file = null; fileB64 = null; fileMime = null;
+  document.getElementById('sidebarPreview').style.display = 'none';
   document.getElementById('inlineBar').classList.remove('show');
   document.getElementById('inputWrap').classList.remove('attached');
+  document.getElementById('attachBtn').classList.remove('has');
+  setProgress('');
+}
+
+function setProgress(msg){
+  document.getElementById('progressMsg').textContent = msg;
 }
 
 /* ── Input helpers ── */
-function resize(el){ el.style.height='auto'; el.style.height=Math.min(el.scrollHeight,120)+'px'; }
-function onKey(e){ if(e.key==='Enter'&&!e.shiftKey){ e.preventDefault(); send(); } }
-function sq(t){ document.getElementById('userInput').value=t; send(); }
+function resize(el){ el.style.height = 'auto'; el.style.height = Math.min(el.scrollHeight, 120) + 'px'; }
+function onKey(e){ if (e.key === 'Enter' && !e.shiftKey){ e.preventDefault(); send(); } }
+function sq(t){ document.getElementById('userInput').value = t; send(); }
 
 /* ── DOM helpers ── */
 const msgsEl = document.getElementById('messages');
-function killWelcome(){ const w=document.getElementById('welcome'); if(w) w.remove(); }
 
-function addMsg(role, html, docMeta){
+function killWelcome(){
+  const w = document.getElementById('welcome');
+  if (w) w.remove();
+}
+
+function addMsg(role, html){
   killWelcome();
-  const wrap=document.createElement('div'); wrap.className=`msg ${role}`;
-  const av=document.createElement('div'); av.className=`avatar ${role}`; av.textContent=role==='bot'?'🤖':'👤';
-  const bub=document.createElement('div'); bub.className=`bubble ${role}`;
+  const wrap = document.createElement('div'); wrap.className = `msg ${role}`;
+  const av = document.createElement('div'); av.className = `avatar ${role}`;
+  av.textContent = role === 'bot' ? '🤖' : '👤';
+  const bub = document.createElement('div'); bub.className = `bubble ${role}`;
   bub.innerHTML = html;
-  wrap.appendChild(av); wrap.appendChild(bub);
+  wrap.appendChild(av);
+  wrap.appendChild(bub);
   msgsEl.appendChild(wrap);
-  msgsEl.scrollTop=msgsEl.scrollHeight;
+  msgsEl.scrollTop = msgsEl.scrollHeight;
+  return bub; // return for potential updates
 }
 
 function showTyping(){
-  const d=document.createElement('div'); d.className='msg bot'; d.id='typing';
-  d.innerHTML='<div class="avatar bot">🤖</div><div class="bubble bot"><div class="typing"><span></span><span></span><span></span></div></div>';
+  const d = document.createElement('div'); d.className = 'msg bot'; d.id = 'typing';
+  d.innerHTML = '<div class="avatar bot">🤖</div><div class="bubble bot"><div class="typing"><span></span><span></span><span></span></div></div>';
   msgsEl.appendChild(d);
-  msgsEl.scrollTop=msgsEl.scrollHeight;
+  msgsEl.scrollTop = msgsEl.scrollHeight;
 }
-function hideTyping(){ const t=document.getElementById('typing'); if(t) t.remove(); }
+function hideTyping(){ const t = document.getElementById('typing'); if (t) t.remove(); }
 
-/* ── Main send ── */
-//>>>>>
-async function extractFromImage(base64) {
-  const { data: { text } } = await Tesseract.recognize(
-    base64,
-    "eng"
-  );
-  return text;
-}
-/*//>>>>>>>>>>>>async function extractFromPDF(file) {
-  const buffer = await file.arrayBuffer();
-  const pdf = await pdfjsLib.getDocument({ data: buffer }).promise;
-
-  let text = "";
-
-  for (let i = 1; i <= pdf.numPages; i++) {
-    const page = await pdf.getPage(i);
-    const content = await page.getTextContent();
-    text += content.items.map(item => item.str).join(" ");
-  }
-
-  return text;
-}*/addMsg
-async function extractFromPDF(file) {
+/* ── PDF text extraction ── */
+async function extractFromPDF(fileObj){
   try {
-    const buffer = await file.arrayBuffer();
+    setProgress('📖 Reading PDF pages...');
+    const buffer = await fileObj.arrayBuffer();
     const pdf = await pdfjsLib.getDocument({ data: buffer }).promise;
-
-    let text = "";
-
-    for (let i = 1; i <= pdf.numPages; i++) {
+    let text = '';
+    for (let i = 1; i <= pdf.numPages; i++){
       const page = await pdf.getPage(i);
       const content = await page.getTextContent();
-
-      text += content.items.map(item => item.str).join(" ") + "\n";
+      const pageText = content.items.map(item => item.str).join(' ');
+      text += `\n--- Page ${i} ---\n` + pageText;
+      setProgress(`📖 Reading page ${i} of ${pdf.numPages}...`);
     }
-
-    console.log("PDF TEXT:", text);
-
-    return text;
-
-  } catch (err) {
-    console.error("PDF ERROR:", err);
-    return "";
+    console.log('PDF extracted text length:', text.length);
+    return text.trim();
+  } catch (err){
+    console.error('PDF extract error:', err);
+    return '';
   }
 }
-async function loadRules() {
-  const rules = await fetch('/rules.json').then(r => r.json());
-  const invalidHeaders = await fetch('/invalid_headers.json').then(r => r.json());
-  const invalidContent = await fetch('/invalid_content.json').then(r => r.json());
-  const zillow = await fetch('/zillow.json').then(r => r.json());
-  const countiesKIs = await fetch('/counties_KIs.json').then(r => r.json());
 
-
-  return {
-    rules,
-    invalidHeaders,
-    invalidContent,
-    zillow,
-    countiesKIs
-  };
-}
+/* ── Main send function ── */
 async function send(){
-  const txt=document.getElementById('userInput').value.trim();
-  if((!txt&&!file)||loading) return;
-  
-  loading=true;
-  document.getElementById('sendBtn').disabled=true;
-  document.getElementById('userInput').disabled=true;
+  const txt = document.getElementById('userInput').value.trim();
 
-  addMsg('user', `<p>${txt || '📎 Attached Document'}</p>`);
+  // Must have text OR a file
+  if (!txt && !file){ return; }
+  if (loading){ return; }
+
+  loading = true;
+  document.getElementById('sendBtn').disabled = true;
+  document.getElementById('userInput').disabled = true;
+
+  // Snapshot current file state before clearing
+  const currentFile    = file;
+  const currentFileB64 = fileB64;
+  const currentFileMime = fileMime;
+  const currentTxt     = txt;
+
+  // Show user message
+  let userDisplay = '';
+  if (currentFile){
+    const icon = currentFileMime === 'application/pdf' ? '📄' : '🖼️';
+    userDisplay += `<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;background:rgba(0,194,255,0.08);border:1px solid rgba(0,194,255,0.2);border-radius:8px;padding:8px 12px;">
+      <span style="font-size:18px">${icon}</span>
+      <div><div style="font-weight:500;color:var(--accent);font-size:13px">${currentFile.name}</div>
+      <div style="font-size:11px;color:var(--muted)">${(currentFile.size/1024).toFixed(1)} KB</div></div></div>`;
+  }
+  if (currentTxt){
+    userDisplay += `<p>${currentTxt}</p>`;
+  }
+  addMsg('user', userDisplay || '<p>📎 Analyze this document</p>');
+
   showTyping();
 
-  //>>>>const fileB64  = fileB64; // Capture current file
-  let finalText = txt;
+  // Clear UI immediately
+  document.getElementById('userInput').value = '';
+  clearFile();
 
-  if (file) {
-    if (fileMime.includes("image")) {
-      finalText = await extractFromImage(fileB64);
-    } 
-    else if (fileMime === "application/pdf") {
-      finalText = await extractFromPDF(file);
+  try {
+    let messageToSend = currentTxt || '';
+    let imageB64ToSend = null;
+    let mimeToSend = null;
+
+    if (currentFile){
+      if (currentFileMime === 'application/pdf'){
+        // ✅ FIX: Extract PDF text then send as text message
+        const pdfText = await extractFromPDF(currentFile);
+
+        if (!pdfText || pdfText.length < 30){
+          hideTyping();
+          addMsg('bot', '<div class="error-msg">⚠️ Could not extract text from this PDF. It may be a scanned image PDF. Try uploading a screenshot/image of the document instead.</div>');
+          loading = false;
+          document.getElementById('sendBtn').disabled = false;
+          document.getElementById('userInput').disabled = false;
+          setProgress('');
+          return;
+        }
+
+        // Combine user question + extracted PDF text
+        messageToSend = `${currentTxt ? currentTxt + '\n\n' : 'Please analyze this real estate document:\n\n'}` +
+          `[DOCUMENT TEXT EXTRACTED FROM PDF: ${currentFile.name}]\n${pdfText}`;
+
+        setProgress('✅ PDF read — sending to AI...');
+
+      } else {
+        // ✅ FIX: For images — send base64 directly to vision AI (no Tesseract needed)
+        imageB64ToSend = currentFileB64;
+        mimeToSend = currentFileMime;
+        messageToSend = currentTxt || 'Please analyze this real estate document. Perform a full SOP-based validity check and extract all key fields.';
+        setProgress('🖼️ Sending image to AI...');
+      }
     }
-  }
-  /*>>>>>>>>if (!finalText || finalText.length < 20) {
-  addMsg('bot', '⚠️ Document not readable. Please upload a clear PDF or image.');
-  return;
-  }*/
 
-  if (file && (!finalText || finalText.length < 20)) {
+    // ✅ FIX: Correct request body — send 'message' (not 'prompt')
+    const requestBody = {
+      message: messageToSend,
+      system: sysPrompt(),
+      history: history.slice(-10),   // last 10 turns for context
+      imageBase64: imageB64ToSend,   // null if no image
+      fileMime: mimeToSend           // null if no image
+    };
+
+    const res = await fetch('/api/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(requestBody)
+    });
+
+    setProgress('');
+
+    if (!res.ok){
+      const errData = await res.json().catch(() => ({}));
+      throw new Error(errData.error || `Server error ${res.status}`);
+    }
+
+    const data = await res.json();
     hideTyping();
 
+    if (data.error){
+      addMsg('bot', `<div class="error-msg">⚠️ ${data.error}</div>`);
+    } else {
+      const replyHtml = fmt(data.reply);
+      addMsg('bot', replyHtml);
+
+      // ✅ FIX: Save to history for multi-turn context
+      history.push({ role: 'user', content: messageToSend.substring(0, 2000) }); // trim huge PDF texts
+      history.push({ role: 'assistant', content: data.reply });
+
+      // Keep history manageable
+      if (history.length > 20) history = history.slice(-20);
+    }
+
+  } catch (err){
+    hideTyping();
+    console.error('Send error:', err);
+    addMsg('bot', `<div class="error-msg">⚠️ ${err.message || 'Connection failed. Check server logs.'}</div>`);
+    setProgress('');
+  } finally {
     loading = false;
     document.getElementById('sendBtn').disabled = false;
     document.getElementById('userInput').disabled = false;
-
-    addMsg('bot', '⚠️ Document not readable. Please upload a clear PDF or image.');
-    return;
+    document.getElementById('userInput').focus();
   }
-
-  if(file) clearFile();
-  document.getElementById('userInput').value='';
-
-  try {
-      const SOP = await loadRules();
-      const res = await fetch('/api/chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          message: finalText,
-          system: sysPrompt(),
-          sop: SOP
-        })
-      });
-
-        // ✅ IMPORTANT FIX
-      if (!res.ok) {
-        throw new Error(`Server error: ${res.status}`);
-      }
-
-      const data = await res.json();
-      hideTyping();
-
-      if (data.error) {
-        addMsg('bot', `<div class="error-msg">⚠️ Error: ${data.error}</div>`);
-      } else {
-        addMsg('bot', fmt(data.reply));
-      }
-      
-    } catch (err) {
-      hideTyping();
-      addMsg('bot', `<div class="error-msg">⚠️ Connection Error. Check Vercel logs.</div>`);
-    } finally {
-      // THIS UNLOCKS THE INPUT BOX
-      loading = false;
-      document.getElementById('sendBtn').disabled = false;
-      document.getElementById('userInput').disabled = false;
-      document.getElementById('userInput').focus();
-    }
 }
 
-/* ── Formatting and System Prompt (Keep your existing versions of these) ── */
+/* ── Quick analyze from sidebar ── */
+function quickAnalyze(){
+  const txt = document.getElementById('userInput').value.trim();
+  if (!file){ return; }
+  if (!txt){
+    document.getElementById('userInput').value = 'Analyze this document. Check validity and extract all key fields.';
+  }
+  send();
+}
 
 /* ── Format response ── */
 function fmt(text){
-  let h=text;
-  h=h.replace(/^#{1,3} (.+)$/gm,'<h4>$1</h4>');
-  h=h.replace(/\*\*([^*\n]+)\*\*/g,'<strong>$1</strong>');
-  h=h.replace(/`([^`\n]+)`/g,'<span class="code-tag">$1</span>');
-  // INVALID / VALID badges (not inside existing tags)
-  h=h.replace(/\bINVALID\b(?![^<]*>)/g,'<span class="invalid-badge">INVALID</span>');
-  h=h.replace(/\bVALID\b(?![^<]*>)/g,'<span class="valid-badge">VALID</span>');
-  // bullets
-  const lines=h.split('\n'); let inUl=false, out=[];
-  for(let l of lines){
-    const tr=l.trim(), isBullet=/^[-•*]\s+/.test(tr);
-    if(isBullet&&!inUl){ out.push('<ul>'); inUl=true; }
-    if(!isBullet&&inUl){ out.push('</ul>'); inUl=false; }
-    if(isBullet) out.push('<li>'+tr.replace(/^[-•*]\s+/,'')+'</li>');
-    else if(tr) out.push('<p>'+l+'</p>');
+  let h = text;
+  // Headers
+  h = h.replace(/^#{1,3} (.+)$/gm, '<h4>$1</h4>');
+  // Bold
+  h = h.replace(/\*\*([^*\n]+)\*\*/g, '<strong>$1</strong>');
+  // Code
+  h = h.replace(/`([^`\n]+)`/g, '<span class="code-tag">$1</span>');
+  // INVALID / VALID badges
+  h = h.replace(/\bINVALID\b(?![^<]*>)/g, '<span class="invalid-badge">INVALID</span>');
+  h = h.replace(/\bVALID\b(?![^<]*>)/g, '<span class="valid-badge">VALID</span>');
+  // Bullets
+  const lines = h.split('\n');
+  let inUl = false, out = [];
+  for (let l of lines){
+    const tr = l.trim();
+    const isBullet = /^[-•*]\s+/.test(tr);
+    if (isBullet && !inUl){ out.push('<ul>'); inUl = true; }
+    if (!isBullet && inUl){ out.push('</ul>'); inUl = false; }
+    if (isBullet) out.push('<li>' + tr.replace(/^[-•*]\s+/, '') + '</li>');
+    else if (tr) out.push('<p>' + l + '</p>');
   }
-  if(inUl) out.push('</ul>');
+  if (inUl) out.push('</ul>');
   return out.join('');
 }
-
-function esc(s){ if(!s) return ''; return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
 /* ── System prompt ── */
 function sysPrompt(){
 return `You are PropDoc AI, an expert assistant for a US-based real estate property document collection company. You help keyers, QA staff, and team leads with SOPs, field rules, document classification, validity checks, and county-specific keying instructions.
+
 IMPORTANT RULES:
 - Only use the provided document text
-- Do NOT guess
+- Do NOT guess or hallucinate
 - If data is missing → say "Not found in document"
 - If document text is empty → say "Document not readable"
+- Always base answers ONLY on given content and SOP rules below
 
-Always base answer ONLY on given content.
 == COMPANY CONTEXT ==
 - Processes US real estate documents for Zillow and CoreLogic
 - Documents: Deeds, Mortgages, Assignments, Releases, Foreclosures
 - Work: keying data fields from scanned county recorder documents
 
-== WHEN A DOCUMENT IS UPLOADED (PDF or IMAGE) ==
-Carefully read the full document and perform a complete SOP-based analysis in this structure:
+== WHEN A DOCUMENT IS UPLOADED (PDF text or IMAGE) ==
+Carefully read the full document and perform a complete SOP-based analysis:
 
 **STEP 1 — DOCUMENT IDENTIFICATION**
 - Read the document header/title on the first page
 - Assign the correct Document Type Code (e.g., WADE, QCDE, DOTM, MORT, ASMT)
 - Assign Data Class: D=Deed Transfer, M=Mortgage, F=Foreclosure
-- Note the state and county if visible (from recorder stamp or document body)
+- Note the state and county if visible
 
 **STEP 2 — VALIDITY CHECK** (check ALL rules):
-RULE 1 — EASEMENT: If the word "Easement" appears in the legal description BEGINNING (first paragraph) OR in buyer/grantee names → INVALID. EXCEPTION: "subject to easement" appearing in the SECOND paragraph or the legal END section = VALID — do not flag this as invalid.
-RULE 2 — OIL AND GAS: Same position rule. In legal start or buyer names = INVALID. In legal end ("subject to oil and gas") = VALID.
-RULE 3 — TIMBER: Same rule. In buyer name or legal starting = INVALID. In legal end second paragraph = VALID.
-RULE 4 — NO TRANSACTION: If no identifiable seller AND no buyer AND no property transfer is described anywhere = INVALID.
-RULE 5 — ZILLOW INVALID HEADERS: If document header/title is one of these → INVALID for Zillow: ACT OF CANCELLATION, ACT OF CORRECTION, ACT OF DONATION, ACT OF DONATION OF MINERAL INTERESTS, ACT OF EXCHANGE, ACT OF RELEASE, ACT OF RENUNCIATION, ACT OF RESTRICTIONS, ACT OF SERVITUDE, ACT OF TERMINATION, ACCESS AGREEMENT, ADDENDUM TO LEASE, DECLARATION OF COVENANTS, EASEMENT DEED, ENCROACHMENT AGREEMENT, GROUND LEASE, INDEMNITY AGREEMENT, LEASE, LIS PENDENS, MAINTENANCE AGREEMENT, MINERAL DEED (primary purpose), OPTION TO PURCHASE, PARKING AGREEMENT, POWER OF ATTORNEY, RESTRICTIVE COVENANT, RIGHT OF WAY, SUBORDINATION AGREEMENT, UTILITY EASEMENT, ZONING VARIANCE
-RULE 6 — MINERAL RIGHTS: If primary purpose of document is mineral rights transfer only, not real property = INVALID
-RULE 7 — NO CONSIDERATION + NO PARTIES: If truly no transaction of any kind, mark INVALID
+RULE 1 — EASEMENT: Word "Easement" in legal description BEGINNING or in buyer/grantee names → INVALID. EXCEPTION: "subject to easement" in SECOND paragraph or legal END section = VALID.
+RULE 2 — OIL AND GAS: In legal start or buyer names = INVALID. In legal end = VALID.
+RULE 3 — TIMBER: In buyer name or legal starting = INVALID. In legal end = VALID.
+RULE 4 — NO TRANSACTION: No identifiable seller AND no buyer AND no property transfer = INVALID.
+RULE 5 — ZILLOW INVALID HEADERS: These document titles → INVALID: ACT OF CANCELLATION, ACT OF CORRECTION, ACT OF DONATION, ACT OF EXCHANGE, ACT OF RELEASE, ACT OF RENUNCIATION, ACT OF RESTRICTIONS, ACT OF SERVITUDE, ACT OF TERMINATION, ACCESS AGREEMENT, ADDENDUM TO LEASE, DECLARATION OF COVENANTS, EASEMENT DEED, ENCROACHMENT AGREEMENT, GROUND LEASE, INDEMNITY AGREEMENT, LEASE, LIS PENDENS, MAINTENANCE AGREEMENT, MINERAL DEED (primary purpose), OPTION TO PURCHASE, PARKING AGREEMENT, POWER OF ATTORNEY, RESTRICTIVE COVENANT, RIGHT OF WAY, SUBORDINATION AGREEMENT, UTILITY EASEMENT, ZONING VARIANCE
+RULE 6 — MINERAL RIGHTS: Primary purpose is mineral rights transfer only = INVALID
 
-**STEP 3 — EXTRACT KEY FIELDS** (state clearly if not found):
+**STEP 3 — EXTRACT KEY FIELDS**:
 - Recording Date: From Clerk/Recorder stamp (first page). Format: MMDDYYYY
 - Document Number: From recorder stamp
-- Book Number: If present in stamp
-- Page Number: If present in stamp
-- Document Date: From opening paragraph of document body
-- Seller / Grantor name(s): All parties listed as grantor/seller
-- Buyer / Grantee name(s): All parties listed as grantee/buyer
+- Book Number / Page Number: If in stamp
+- Document Date: From opening paragraph
+- Seller / Grantor: ALL parties
+- Buyer / Grantee: ALL parties
 - Property Address: Street address if stated
-- APN / Parcel Number: Labeled as "Assessment No.", "Parcel ID", "Tax ID", "Parcel No."
-- Sales Price / Consideration: Stated dollar amount (key if > $100)
-- Loan Amount: If mortgage document
-- Vesting: How title is held (Joint Tenancy, Tenancy in Common, Trust, etc.)
-- Lender Name: If mortgage document
+- APN / Parcel Number: "Assessment No.", "Parcel ID", "Tax ID"
+- Sales Price: Stated dollar amount (key if > $100)
+- Loan Amount: If mortgage
+- Vesting: How title is held
+- Lender Name: If mortgage
 - Signature Date: If different from document date
 
 **STEP 4 — VERDICT**
-Start your response with one of:
 ✅ **VALID** — document can be keyed
-❌ **INVALID** — document cannot be keyed, with specific reason(s)
-⚠️ **NEEDS REVIEW** — borderline case, explain what to check
-
-Then list all extracted fields clearly.
-Then give keying notes/warnings if any.
+❌ **INVALID** — with specific reason(s)
+⚠️ **NEEDS REVIEW** — explain what to check
 
 == DATA CLASS CODES ==
 D=Deed Transfer | M=Mortgage | F=Foreclosure
-(A,E,H,I,J,P,R,S,U,V,X = Not keyed by Zillow)
 
-== KEY DOCUMENT TYPE CODES ==
-WADE=Warranty Deed | QCDE=Quitclaim Deed | GRDE=Grant Deed | TRDE=Trustee's Deed
-BADE=Bargain & Sale Deed | DILI=Deed in Lieu | BDDE=Beneficiary/TOD Deed
-CFDE=Contract for Deed | CRDE=Correction Deed | AMDE=Assumption Deed
-MORT=Mortgage | DOTM=Deed of Trust | ASMT=Assignment of Mortgage | RELM=Release of Mortgage
+== DOCUMENT TYPE CODES ==
+WADE/WRDE=Warranty Deed | QCDE=Quitclaim Deed | GRDE=Grant Deed | TRDE=Trustee's Deed
+BADE/BSDE=Bargain & Sale Deed | DILI=Deed in Lieu | BDDE=Beneficiary/TOD Deed
+MORT/MTGE=Mortgage | DOTM=Deed of Trust | ASMT=Assignment of Mortgage | RELM=Release
 NODF=Notice of Default | NOTS=Notice of Trustee Sale | TDUS=Trustee's Deed Upon Sale
-AFDT=Affidavit-Death of Joint Tenant | AFSS=Affidavit-Surviving Spouse
-AFSJ=Affidavit-Surviving Joint Tenant | AFDV=Affidavit | AFTD=Affidavit-Transfer on Death
-
-== CRITICAL FIELDS ==
-- FIPS: 5-digit (first 2=state, last 3=county). CRITICAL.
-- Recording Date: MMDDYYYY from Clerk stamp. CRITICAL.
-- Document Date: From document body. Must be ≤ Recording Date.
-- APN: Key per county KI. LA counties: typically 9-digit, drop leading zero from 10-digit.
-- Sales Price: Whole dollars only, key if > $100.
-- Seller/Buyer: ALL parties. In Louisiana check signature lines.
+AFDT=Affidavit-Death of JT | AFSV=Affidavit-Survivorship | CRDE=Correction Deed
 
 == VESTING CODES ==
-CP=Community Property | CS=Community Property w/Right of Survivorship
-JT=Joint Tenancy | OC=Tenancy in Common | SP=Sole & Separate
-TR=Trust | CO=Corporation | JV=Joint Venture | DP=Domestic Partner
-(LE, IR, FM, FL, FR, IL, EU, EA, ES = Not keyed by Zillow)
+CP=Community Property | JT=Joint Tenancy | OC=Tenancy in Common | SP=Sole & Separate
+TR=Trust | CO=Corporation | DP=Domestic Partner | RS=Right of Survivorship
+TC=Tenancy in Common | TE=Tenants by Entirety
 
-== BORROWER / SELLER / BUYER DESCRIPTION CODES (ZILLOW) ==
-CRITICAL — These are ZILLOW codes. CoreLogic uses DIFFERENT codes for the same descriptions. Always use Zillow codes when keying for Zillow.
-
-Individual/Person types:
+== PARTY DESCRIPTION CODES (ZILLOW) ==
 ID=Individual | HW=Husband & Wife | MM=Married Man | MW=Married Woman
-SM=Single Man | SW=Single Woman | SP=Single Person | MP=Married Person
-HU=Husband & Husband | WI=Wife & Wife | MC=Married Couple | DP=Domestic Partner
-NM=Never Married | SS=Surviving Spouse | WW=Widow/Widower | DV=Divorced
-
-Partnership/Business types:
-PT=Partnership (General or unspecified)  ← ZILLOW code for Partnership
-GP=General Partnership | LP=Limited Partnership | LL=Limited Liability Partnership
-LN=Limited Partner | GN=General Partner
-CO=Company | TR=Trust | TE=Trustee | IT=Irrevocable Trust | RL=Revocable Living Trust
-RT=Revocable Trust | LV=Living Trust | FL=Family Living Trust | FR=Family Revocable Trust
-SH=Sole Proprietorship | SB=Sole Member | MG=Managing Member | MB=Member
-
-IMPORTANT — PA is NOT Partnership in Zillow:
-PA=Attorney in Fact / Power of Attorney  ← ZILLOW uses PA for this, NOT Partnership
-(CoreLogic uses PA for Partnership — this is a common confusion point)
-
-Other codes:
-ES=Estate | EX=Executor/Executrix | PR=Personal Representative | GD=Guardian
-AD=Administrator | BF=Beneficiary | HB=Husband | WF=Wife | SO=Spouse
-SJ=Surviving Joint Tenant | SE=Surviving Tenant by Entirety
-GV=Government | US=United States | RG=Religious/Church
-AK=Also Known As | NK=Now Known As | FK=Formerly Known As | DB=Doing Business As
+SM=Single Man | SW=Single Woman | SP=Single Person | CO=Company/LLC
+TR=Trust | TE=Trustee | AK=Also Known As | DB=Doing Business As
+PA=Attorney in Fact (Power of Attorney) — NOT Partnership in Zillow
+PT=Partnership | GP=General Partnership | LP=Limited Partnership | LL=LLP
+ES=Estate | EX=Executor | PR=Personal Representative | GD=Guardian
+GV=Government | BF=Beneficiary | SJ=Surviving Joint Tenant
 
 == LOAN TYPE CODES ==
-FH=FHA | VA=VA Loan | CV=Conventional | CL=HELOC/Credit Line
-CS=Construction | CM=Commercial | BL=Balloon | AS=Assumption
-RV=Reverse Mortgage | SL=Second Lien | DP=Down Payment Assistance | UN=Unknown
+FH=FHA | VA=VA | CV=Conventional | CL=HELOC/Credit Line
+CS=Construction | CM=Commercial | BL=Balloon | RV=Reverse Mortgage
+
+== SALES PRICE CODES ==
+NO=Not Provided/Nominal | RD=Recorded amount (>$100) | CF=Confirmed
 
 == COUNTY NOTES ==
-- Louisiana: ALL sellers AND buyers must sign; check signature lines. "Square" = Block in legal. APN typically 9-digit.
-- Assumption LA: File Number = Document Number. Webkey: http://assumptionclerk.com/record-search/
-- Calcasieu LA: Easement in legal starting → INVALID
-- Webster LA: Oil and gas in legal starting → INVALID
-- Montgomery AL: Affidavits with no transaction = INVALID
-- La Porte IN: Timber in buyer name or legal starting → INVALID
-- Recording Date format: MMDDYYYY in all counties
-- APN labels: "Assessment No.", "Parcel ID Number", "Tax Identification", "Parcel No.", "Lot No."
-- Sales Price labels: "consideration of", "for the sum of", "purchase price of", "$___"
-- Document Date: "dated this ___ day of", "made on", "executed on", "as of"
-
-== REAL KEYING PATTERNS (from actual production keyed data) ==
-
-DATE FORMAT: MM/DD/YYYY in system (e.g., 01/02/2026). RecordingDate always from Clerk stamp page 1. DocumentDate always ≤ RecordingDate.
-
-DOCUMENT TYPES IN PRODUCTION:
-Deeds (D): WRDE=Warranty Deed(most common), BSDE=Bargain & Sale Deed, QCDE=Quitclaim Deed, TRDE=Trustee's Deed, TFDD=Transfer on Death, SHDE=Sheriff's Deed, PRDE=Personal Rep, BFDE=Beneficiary Deed, CRDE=Correction Deed, SPWD=Special Warranty Deed, EXDE=Executor Deed, AFSV=Affidavit-Survivorship, AFDT=Affidavit-Death JT, AFDV=Affidavit, ADDE=Admin Deed, RFDE=Referee Deed, CTSL=Cert of Sale, LWDE=Last Will Deed, AGSL=Agreement of Sale, DEED=General Deed, LDCT=Limited Cert
-Mortgages (M): MTGE=Mortgage (overwhelmingly most common)
-
-NAME KEYING PATTERNS (real examples):
-- Individual man: First="GREGORY" Last="LYKES" Code=SP
-- Couple (HW): #1 First="WILLIAM DAVID" Last="DUDLEY" Code=HW, #2 First="CAROL B" Last="DUDLEY" Code=HW
-- Middle name included in First field: First="ANDREW" or "STEPHEN J" or "GEORGE COLE"
-- Company: First=BLANK Last="R&M COMPANIES LLC" Code=CO
-- Trust entity: First=BLANK Last="CVF III MORTGAGE LOAN TRUST II" Code=TR
-- DBA: #1 Last="MONTGOMERY REAL ESTATE BUYERS LLC" Code=CO, #2 Last="RAPID FIRE HOME BUYERS" Code=DB
-- AKA: #1 First="VICTOR" Last="ROSS" Code=UM, #2 First="VICTOR J" Last="ROSS" Code=AK
-- HI = His Wife (e.g., #2 First="SHERRY L" Last="SLAGLE" Code=HI paired with MM husband)
-
-ID CODE FREQUENCY (real production):
-SELLER: ID(295), HW(116), CO(59), TE(59), DF(38), AK(24), DC(16), RT(15), SP(12), LV(12)
-BUYER: ID(254), HW(170), TE(78), CO(70), BF(51), LT(16), TR(14), MC(14), FT(13), RT(12)
-BORROWER: ID(260), HW(150), CO(49), MC(38), SP(16), SO(14), UP(13), AK(13), MP(12), UM(10)
-
-BUYER VESTING CODES (real): JT=Joint Tenancy(most common), TC=Tenancy in Common, TE=Tenants by Entirety, RS=Right of Survivorship. Only keyed on Deed records.
-
-LENDER PATTERNS:
-- LenderName keyed ALL CAPS exactly as printed
-- LenderTypeStndCode: UN=Unknown(most common,157), BK=Bank(96), MG=Mortgage Co(66), CU=Credit Union(20), PP=Private Party(9), GV=Government(5)
-- LenderIDStndCode: 003333 = default for any unknown/unlisted lender (UN type)
-- Known: PNC BANK NA=BK/003192, NAVY FCU=CU/001079, AMERISAVE=MG/009836
-- Most records with unknown lenders → Type=UN, ID=003333
-
-LOAN TYPE CODES (real): CL=HELOC/Credit Line(74,most common), SM=Second Mortgage(25), PM=Purchase Money(12), CM=Commercial(7), CS=Construction(5), HE=Home Equity(4). Most MTGE records have NO loan type — only key if explicitly stated on document.
-
-SALES PRICE CODES (real): NO=Not Provided/Nominal(252,most common for deeds), RD=Recorded stated amount(164), CF=Confirmed(21). Key: if amount >$100 → use RD code + key amount. If nominal ($1/$10/"love and affection") → NO code, leave amount blank.
-
-PROPERTY ADDRESS BREAKDOWN:
-- Split into components: HouseNumber, StreetPreDirectional(N/S/E/W if before name), StreetName, StreetSuffix(CT/DR/ST/RD/LN/PL/TRL/AVE/BLVD), StreetPostDirectional
-- AND populate PropertyFullStreet as combined string
-- Example: "960 N GAP LOOP" → HouseNum=960, PreDir=N, Name=GAP, Suffix=LOOP, Full="960 N GAP LOOP"
-- Street names with multiple words: "LOCH HAVEN RD" → Name="LOCH HAVEN", Suffix=RD
-- Numbered streets: "1813 W 3RD ST" → HouseNum=1813, PreDir=W, Name=3RD, Suffix=ST
-
-LEGAL DESCRIPTION KEYING:
-- LegalLot: lot number only (19, 10, 15)
-- LegalBlock: block letter or number (N, C, 83, A)  
-- LegalSubdivisionName: full name as printed (MONTWOOD ESTATES NO 2, VAUGHN MEADOWS PLAT NO 9)
-- LegalStndCode: C=Complete (most common), U=Uncertain
-- LegalSecTwnRngMer: Section-Township-Range (POR S3 T15N R18E)
-- Louisiana only: "Square" in document = key as LegalBlock
-
-COMMENTS FIELD: Used for exceptions only — e.g., "DUE DATE IGNORED", "TAX ITEM NO IGNORED", "APN & ADDRESS NOT KEYED"
-
-BATCH NAME FORMAT: STATE_COUNTY_STARTDATE_ENDDATE[_DOCTYPE] e.g., AL_MONTGOMERY_01012026_01102026, NY_SUFFOLK_11262025_01062026_MORTGAGE
-
-STATES IN PRODUCTION: AL(MONTGOMERY), IL(CHRISTIAN,JACKSON,PERRY), IN(DE KALB,DELAWARE,GRANT,GREENE,JACKSON,LA PORTE,MIAMI,OWEN,STARKE,TIPPECANOE,WABASH,WASHINGTON), KS(MIAMI), LA(CADDO), MI(EMMET,HILLSDALE,TUSCOLA), MO(FRANKLIN,MARION,NODAWAY,SCOTT), NY(COLUMBIA,DELAWARE,DUTCHESS,ESSEX,HAMILTON,HERKIMER,ONEIDA,ROCKLAND,SCHOHARIE,SUFFOLK,TOMPKINS,ULSTER,WARREN,WYOMING), SC(BAMBERG,UNION), VA(CHARLOTTE,CHARLOTTESVILLE CITY), WA(PEND OREILLE)
+- Louisiana: ALL sellers AND buyers must sign; check signature lines. "Square" = Block.
+- APN typically 9-digit in LA. Drop leading zero from 10-digit.
+- Recording Date format: MMDDYYYY always
+- Document Date must be ≤ Recording Date
 
 == RESPONSE STYLE ==
-- For document uploads: be thorough and structured with ✅/❌/⚠️ verdicts
-- For general questions: concise and practical
-- Use backtick codes: \`WADE\`, \`MMDDYYYY\`, \`D\`
-- When showing name keying examples, use format: First="JOHN A" Last="SMITH" Code=HW
-- If a field is not visible in the document say "Not visible in document"
-- Never guess at fields — mark them Not Found
-- Use bullet points for field lists`;
+- For document uploads: thorough structured analysis with ✅/❌/⚠️
+- For questions: concise and practical
+- Use backtick codes: WADE, MMDDYYYY, D
+- Mark any missing field as "Not found in document"
+- Never guess — accuracy over completeness`;
 }
 </script>
 </body>
