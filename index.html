@@ -487,8 +487,7 @@ async function send(){
   return;
   }*/
 
-  if (!finalText || finalText.length < 20) {
-
+  if (file && (!finalText || finalText.length < 20)) {
     hideTyping();
 
     loading = false;
@@ -508,17 +507,22 @@ async function send(){
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          prompt: finalText,
+          message: finalText,
           system: sysPrompt(),
           sop: SOP
         })
       });
 
+        // ✅ IMPORTANT FIX
+      if (!res.ok) {
+        throw new Error(`Server error: ${res.status}`);
+      }
+
       const data = await res.json();
       hideTyping();
 
       if (data.error) {
-        addMsg('bot', `<div class="error-msg">⚠️ Error: ${data.error.message}</div>`);
+        addMsg('bot', `<div class="error-msg">⚠️ Error: ${data.error}</div>`);
       } else {
         addMsg('bot', fmt(data.reply));
       }
