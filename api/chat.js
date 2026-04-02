@@ -1,17 +1,54 @@
+const countiesData = require('../counties_rules.json');
 // ✅ node-fetch fallback for Node < 18
 const fetch = globalThis.fetch || require('node-fetch');
 
+// ✅ Smart lookup: extract only the relevant county data to stay within token limits
+function getRelevantContext(message) {
+  if (!message) return { common_rules: countiesData.common_rules };
+
+  const msgLower = message.toLowerCase();
+
+  // Try to find a matching county by name in the message
+  const matchedCounty = (countiesData.counties || []).find(c => {
+    const countyName = c.county?.toLowerCase() || "";
+    // e.g. "Assumption_LA KI_v1.2" → check if message contains "assumption"
+    const parts = countyName.split(/[_\s]/);
+    return parts.some(part => part.length > 3 && msgLower.includes(part));
+  });
+
+  if (matchedCounty) {
+    return {
+      common_rules: countiesData.common_rules,
+      county: matchedCounty
+    };
+  }
+
+  // No specific county matched — return only common_rules to save tokens
+  return {
+    common_rules: countiesData.common_rules,
+    note: "No specific county matched. Apply common rules."
+  };
+}
+
 module.exports = async function handler(req, res) {
+
+  console.log("=== API HIT ===");
+  console.log("Method:", req.method);
+
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
   }
 
-  // ✅ FIX 1: Read 'message' (not 'prompt') to match what frontend sends
+  // ✅ Read 'message' to match what frontend sends
   const { message, system, imageBase64, fileMime, history = [] } = req.body;
+  console.log("Incoming message:", message);
+  console.log("Has image:", !!imageBase64);
+  console.log("History length:", history.length);
 
-  const apiKey = process.env.OPENROUTER_API_KEY;
+  const apiKey = process.env.GROQ_API_KEY;
+  console.log("API Key exists:", apiKey ? "YES" : "NO");
   if (!apiKey) {
-    return res.status(500).json({ error: "Missing OPENROUTER_API_KEY" });
+    return res.status(500).json({ error: "Missing GROQ_API_KEY" });
   }
 
   if (!message && !imageBase64) {
@@ -19,11 +56,10 @@ module.exports = async function handler(req, res) {
   }
 
   try {
-    // ✅ FIX 2: Build user content — support both text and image (multimodal)
+    // ✅ Build user content — support both text and image (multimodal)
     let userContent;
 
     if (imageBase64) {
-      // Send image directly to vision model
       userContent = [
         {
           type: "image_url",
@@ -40,38 +76,36 @@ module.exports = async function handler(req, res) {
       userContent = message;
     }
 
-    // ✅ FIX 3: Build messages array with conversation history
+    // ✅ Only inject relevant county rules — avoids blowing the TPM limit
+    const relevantContext = getRelevantContext(message);
+    console.log("County context matched:", relevantContext?.county?.county || "common rules only");
+
+    // ✅ Build messages array with conversation history
     const messages = [
       {
         role: "system",
-        content: system || "You are PropDoc AI, an expert US real estate document assistant."
+        content: system + "\n\nDATABASE RULES (relevant context only):\n" + JSON.stringify(relevantContext)
       },
-      // Include prior conversation turns for context
-      ...history.map(h => ({
-        role: h.role,
-        content: h.content
-      })),
+      ...history,
       {
         role: "user",
-        content: userContent
+        content: imageBase64 ? userContent : message
       }
     ];
 
-    // ✅ FIX 4: Use a model that supports vision if image is attached
-    const model = imageBase64
-      ? "google/gemini-2.0-flash-001"   // Vision-capable model for images
-      : "stepfun/step-3.5-flash";        // Fast text model for text queries
+    // ✅ Updated model — llama3-8b-8192 is decommissioned
+    const model = "llama-3.3-70b-versatile";
 
     console.log("Using model:", model);
     console.log("Message length:", typeof userContent === "string" ? userContent.length : "multimodal");
+    console.log("Sending request to Groq...");
+    console.log("Messages preview:", JSON.stringify(messages).slice(0, 300));
 
-    const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+    const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
       method: "POST",
       headers: {
         "Authorization": `Bearer ${apiKey}`,
-        "Content-Type": "application/json",
-        "HTTP-Referer": "https://propdoc.ai",   // Optional: helps with OpenRouter routing
-        "X-Title": "PropDoc AI"
+        "Content-Type": "application/json"
       },
       body: JSON.stringify({
         model,
@@ -83,12 +117,13 @@ module.exports = async function handler(req, res) {
 
     const data = await response.json();
 
-    console.log("OpenRouter status:", response.status);
+    console.log("Groq status:", response.status);
+    console.log("Groq full response:", JSON.stringify(data));
 
     if (!response.ok) {
-      console.error("OpenRouter error:", data);
+      console.error("Groq error:", data);
       return res.status(500).json({
-        error: data.error?.message || `OpenRouter error: ${response.status}`
+        error: data.error?.message || `Groq error: ${response.status}`
       });
     }
 
@@ -102,7 +137,7 @@ module.exports = async function handler(req, res) {
     res.status(200).json({ reply: resultText });
 
   } catch (err) {
-    console.error("Handler error:", err);
+    console.error("❌ FULL ERROR:", err);
     res.status(500).json({ error: "AI connection failed: " + err.message });
   }
 };
